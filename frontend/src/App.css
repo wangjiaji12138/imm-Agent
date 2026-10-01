@@ -442,14 +442,15 @@
 .content-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
-  align-items: start;
+  align-items: stretch;
   gap: 23px;
   margin-top: 16px;
 }
 
 .question-column,
 .evidence-column {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   gap: 14px;
 }
@@ -535,6 +536,7 @@
 }
 
 .question-input .MuiInputBase-root {
+  min-height: 100px; 
   align-items: flex-start;
   background: #fbfcff;
 }
@@ -764,6 +766,7 @@
 }
 
 .evidence-legend {
+  margin-top: auto;
   padding: 10px 14px;
 }
 

@@ -427,3 +427,24 @@
 ### Not touched
 - 未改动欢迎区、推荐问题、输入框行为、后端与问答功能；保留前一轮未提交修改及既有日志。
 - 当前浏览器自动化不可用，本次依据用户截图和布局代码修复，尚未完成实际窗口截图复核。
+
+---
+
+## 2026-10-01 21:47
+
+### Changed
+- `frontend/src/App.css` — 主内容双栏改为 stretch 对齐，让左右列等高，末尾卡片底边对齐。
+- `REVIEW.md` — 追加双栏底边对齐记录。
+
+### Why
+- 修复用户截图中左侧功能规划与右侧证据状态卡片底边参差的问题。
+
+### Verify
+- `docker compose exec -T frontend npm run build` → 构建通过。
+- `docker compose exec -T frontend npm run lint` → 0 warnings、0 errors。
+- `git diff --check` → 无空白错误。
+- 刷新 `http://127.0.0.1:5173/`，窗口宽度大于 1180px → 左右两列末尾卡片底边对齐；宽度不超过 1180px → 保持原有响应式排列。
+
+### Not touched
+- 未修改卡片文字、输入框、已有紧凑间距或业务逻辑；未设置固定列高。
+- 浏览器自动化连接不可用，未完成实际截图复核。
