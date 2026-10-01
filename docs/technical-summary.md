@@ -24,7 +24,7 @@ flowchart LR
 
 ## 2. 前端：把操作变成页面状态
 
-### React 与 React DOM
+### React 与 React DOM 已掌握
 
 - **是什么**：React 用组件描述界面；React DOM 把组件渲染到浏览器页面。
 - **为什么**：提问模式、草稿和弹窗需要随用户操作更新，用状态驱动界面便于保持一致。
