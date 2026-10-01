@@ -6,7 +6,7 @@
 
 ## 使用方法
 
-首次开发或更换电脑时，先完整执行 [Windows 开发工作流](docs/development-workflow.md)，确认容器构建、健康检查和测试全部通过。
+首次开发或更换电脑时，先按所用平台完整执行 [跨平台开发工作流](docs/development-workflow.md)，确认容器构建、健康检查和测试全部通过。
 
 每次 VibeCoding 时，把一个任务卡中“交给编程助手”下的文字完整复制给编程助手。编程助手需要先读 `README.md` 和本文件，只修改任务涉及的文件，完成后运行卡片指定的验收命令。
 
@@ -24,7 +24,7 @@
 - 后端目录为 `backend/`，前端目录为 `frontend/`，项目文档为 `docs/`，原始资料只放在不提交 Git 的 `data/raw/`。
 - 首版只做癌症免疫疗法科普问答、来源展示和多轮追问。不做诊断、个体化治疗建议、自动用药建议、模型微调和知识图谱。
 
-宿主机只要求安装 Git、WSL 2 和 Docker Desktop。Python、Node.js、项目包、MySQL 与 Qdrant 全部安装在镜像或容器内。除 Docker 命令外，本文命令都通过 `docker compose run` 或 `docker compose exec` 执行，不依赖宿主机的 Python、Node.js、pip 或 npm。
+宿主机按开发工作流准备 Git 与对应平台的 Docker 环境：Windows 使用 WSL 2 与 Docker Desktop，macOS 仅覆盖 Apple Silicon，Linux 使用 Docker Engine 与 Compose 插件。Python、Node.js、项目包、MySQL 与 Qdrant 全部安装在镜像或容器内。除 Docker 命令外，本文命令都通过 `docker compose run` 或 `docker compose exec` 执行，不依赖宿主机的 Python、Node.js、pip 或 npm。
 
 ## 第一阶段：先得到可以启动的空应用
 

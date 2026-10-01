@@ -215,3 +215,26 @@
 - 保留用户已有的产品定位和输入输出描述修改。
 - 未修改后端代码或架构图；本次仅完善文档约定，尚未实现分类器。
 - TODO 任务 01 的历史完成记录仍保留当时的 10 个示例数。
+
+---
+
+## 2026-10-01 19:21
+
+### 变更
+- `docs/development-workflow.md` — 分开 Windows、macOS Apple Silicon 和 Linux 安装步骤，共用 Docker 就绪检查、构建、测试及日常流程；补充平台命令差异、ARM64 检查和实测状态。
+- `README.md` — 更新工作流入口名称及分平台宿主机要求。
+- `TODO.md` — 更新工作流入口名称及分平台宿主机要求。
+- `REVIEW.md` — 追加本次文档调整记录。
+
+### 原因
+- 按用户要求将安装流程分平台记录，Mac 仅覆盖 ARM 芯片，容器内开发流程保持统一。
+
+### 验证
+- `git diff --check` → 无空白错误。
+- 在 Docker CLI 所在目录已加入当前终端 PATH 后，执行 `docker compose config --quiet` → 退出码 0。
+- 阅读工作流第 2、3、6、7 节 → 三个平台有各自安装入口，通用命令共用，文件复制、接口请求、端口排查按平台区分。
+- 分别执行 `docker buildx imagetools inspect python:3.10.11-slim`、`docker buildx imagetools inspect mysql:8.4`、`docker buildx imagetools inspect qdrant/qdrant:v1.15.5` → Docker Hub 连接被拒绝，未能核实远端 ARM64 清单。
+
+### 未处理
+- 未修改应用代码、Dockerfile 或 Compose 配置；未重复运行应用测试。
+- macOS 与 Linux 没有实际设备验证，文档保留待实测状态；未添加 Intel Mac 流程或强制 AMD64 模拟配置。
