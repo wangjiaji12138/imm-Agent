@@ -121,7 +121,7 @@ docker compose ps
 
 ### 04｜创建前端骨架
 
-- [ ] 创建 `frontend/` React + TypeScript 页面和 Node.js 22 Dockerfile，并显示后端健康状态。
+- [x] 创建 `frontend/` React + TypeScript 页面和 Node.js 22 Dockerfile，并显示后端健康状态。
 
 页面必须包含：标题“Imm-Agent”、一句科普定位、禁用状态的提问框、后端状态文字。页面加载时请求 `/health`；成功显示“服务正常”，失败显示“服务未连接”。
 
@@ -137,7 +137,9 @@ docker compose run --rm frontend npm run lint
 
 交给编程助手：
 
-> 完成 TODO 任务 04。用 Node.js 22 容器和 Vite 创建 React + TypeScript 前端，实现标题、定位说明、暂时禁用的提问框和后端健康状态。把前端服务加入 Compose，配置开发代理访问后端。不要要求宿主机安装 Node.js 或 npm。保持页面简单，不加入聊天、登录和 UI 组件库。在容器内运行 lint 与 build。
+> 完成 TODO 任务 04。用 Node.js 22 容器和 Vite 创建 React + TypeScript 前端，实现标题、定位说明、暂时禁用的提问框和后端健康状态。把前端服务加入 Compose，配置开发代理访问后端。不要要求宿主机安装 Node.js 或 npm。保持页面简单，按用户决定使用 Material UI，不加入聊天或登录。在容器内运行 lint 与 build。
+
+完成记录：文件=`frontend/`、`compose.yaml`、`docs/development-workflow.md`；验证=前端镜像构建成功，容器内 build 和 lint 通过，四个 Compose 服务均为 healthy，浏览器验证后端正常和断开状态；备注=提问框按首版任务保持禁用。
 
 ## 第二阶段：从公开来源建立可追溯知识库
 

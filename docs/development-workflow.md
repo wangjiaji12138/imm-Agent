@@ -21,7 +21,7 @@
 | 后端 | `python:3.10.11-slim` | Docker 镜像 |
 | MySQL | `mysql:8.4` | Docker 镜像 |
 | Qdrant | `qdrant/qdrant:v1.15.5` | Docker 镜像 |
-| 前端 | Node.js 22 | 任务 04 创建前端镜像时加入 |
+| 前端 | `node:22` | Docker 镜像 |
 
 版本表用于说明 Windows 上已验证的组合，不代表 macOS/Linux 已完成验证。Docker CLI 版本不等于 Docker Desktop 应用版本。更新任一镜像版本后，必须重新构建、运行测试并在 `REVIEW.md` 记录结果。
 
@@ -184,15 +184,15 @@ docker image inspect python:3.10.11-slim mysql:8.4 qdrant/qdrant:v1.15.5 --forma
 
 三项都应显示 `linux/arm64`。若拉取报告 `no matching manifest` 或架构不是 ARM64，先按第 6 节排查，不能直接视为该平台验证通过。
 
-### 3.5 构建后端镜像
+### 3.5 构建应用镜像
 
 ```text
-docker compose build backend
+docker compose build backend frontend
 ```
 
-该命令在镜像内部安装 `backend/pyproject.toml` 中声明的 FastAPI、pytest、PyMySQL 等包，不读取宿主机 Python 环境。
+该命令在镜像内部安装 `backend/pyproject.toml` 中声明的 Python 包和 `frontend/package-lock.json` 锁定的 Node.js 包，不读取宿主机 Python 或 Node.js 环境。
 
-通过条件：后端镜像构建成功，且命令退出码为 0；输出中的镜像名前缀可能随项目目录名变化。
+通过条件：前后端镜像均构建成功，且命令退出码为 0；输出中的镜像名前缀可能随项目目录名变化。
 
 ### 3.6 启动全部服务
 
@@ -201,13 +201,14 @@ docker compose up -d
 docker compose ps
 ```
 
-首次启动 MySQL 可能需要几十秒。重复执行 `docker compose ps`，直到以下三个服务的状态都包含 `healthy`：
+首次启动 MySQL 可能需要几十秒。重复执行 `docker compose ps`，直到以下四个服务的状态都包含 `healthy`：
 
+- `frontend`
 - `backend`
 - `mysql`
 - `qdrant`
 
-端口只绑定到本机：后端 `127.0.0.1:8000`、MySQL `127.0.0.1:3306`、Qdrant `127.0.0.1:6333` 和 `6334`。
+端口只绑定到本机：前端 `127.0.0.1:5173`、后端 `127.0.0.1:8000`、MySQL `127.0.0.1:3306`、Qdrant `127.0.0.1:6333` 和 `6334`。
 
 ### 3.7 验证接口
 
@@ -257,12 +258,13 @@ docker compose up -d
 docker compose ps
 ```
 
-3. 确认三个服务均为 `healthy`。
+3. 确认四个服务均为 `healthy`。
 
 ### 查看日志
 
 ```text
 docker compose logs --tail 100 backend
+docker compose logs --tail 100 frontend
 docker compose logs --tail 100 mysql
 docker compose logs --tail 100 qdrant
 ```
@@ -287,6 +289,17 @@ docker compose ps
 ```
 
 随后重新请求 `/health` 和 `/ready`。只有构建、测试、容器健康和接口行为都符合任务卡验收条件，才能在 `TODO.md` 勾选任务。
+
+### 修改前端代码后
+
+开发中的 `frontend/` 目录挂载到前端容器，保存代码后 Vite 会自动刷新页面。`package.json` 或 `package-lock.json` 变化后需要重建镜像；提交任务前始终执行：
+
+```text
+docker compose build frontend
+docker compose run --rm --no-deps frontend npm run build
+docker compose run --rm --no-deps frontend npm run lint
+docker compose up -d frontend
+```
 
 ### 结束开发
 
@@ -410,7 +423,7 @@ sudo ss -ltnp
 - [ ] `docker compose config --quiet` 通过。
 - [ ] 固定基础镜像拉取成功。
 - [ ] `docker compose build backend` 成功。
-- [ ] 后端、MySQL、Qdrant 均为 `healthy`。
+- [ ] 前端、后端、MySQL、Qdrant 均为 `healthy`。
 - [ ] `/health` 和 `/ready` 返回预期内容。
 - [ ] 容器内 pytest 全部通过。
 - [ ] 宿主机没有为本项目额外安装 Python、Node.js、MySQL 或 Qdrant。

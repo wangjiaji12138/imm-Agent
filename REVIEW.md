@@ -238,3 +238,81 @@
 ### 未处理
 - 未修改应用代码、Dockerfile 或 Compose 配置；未重复运行应用测试。
 - macOS 与 Linux 没有实际设备验证，文档保留待实测状态；未添加 Intel Mac 流程或强制 AMD64 模拟配置。
+
+---
+
+## 2026-10-01 19:51
+
+### 变更
+- `frontend/.gitignore` — 脚手架生成前端忽略规则。
+- `frontend/.oxlintrc.json` — 脚手架生成 lint 配置。
+- `frontend/README.md` — 脚手架生成模板说明。
+- `frontend/index.html` — 脚手架生成 HTML 入口。
+- `frontend/package.json` — 脚手架声明 React、TypeScript、Vite 依赖及开发命令。
+- `frontend/public/favicon.svg` — 脚手架生成默认站点图标。
+- `frontend/public/icons.svg` — 脚手架生成示例图标集合。
+- `frontend/src/App.tsx` — 脚手架生成示例页面与计数器。
+- `frontend/src/App.css` — 脚手架生成示例页面样式。
+- `frontend/src/index.css` — 脚手架生成全局样式。
+- `frontend/src/main.tsx` — 脚手架生成 React 挂载入口。
+- `frontend/src/assets/hero.png` — 脚手架生成示例图片。
+- `frontend/src/assets/react.svg` — 脚手架生成 React 标志。
+- `frontend/src/assets/vite.svg` — 脚手架生成 Vite 标志。
+- `frontend/tsconfig.json` — 脚手架生成 TypeScript 配置入口。
+- `frontend/tsconfig.app.json` — 脚手架生成页面 TypeScript 配置。
+- `frontend/tsconfig.node.json` — 脚手架生成工具 TypeScript 配置。
+- `frontend/vite.config.ts` — 脚手架启用 React 插件。
+- `REVIEW.md` — 记录用户在 Node.js 22 容器中完成的前端初始化。
+
+### 原因
+- 按做中学的节奏开始任务 04，先生成 React + TypeScript 前端骨架。
+
+### 验证
+- 用户第二次运行 create-vite 输出 Done；检查上述文件已存在。
+- `Get-Content frontend/package.json` → 包含 dev、build、lint 命令。
+
+### 未处理
+- 尚未安装前端依赖、启动页面或运行 build/lint；任务 04 仍未完成。
+- 保留模板页面和资源，后续逐步修改；尚未添加前端 Dockerfile、Compose 服务或后端请求。
+
+---
+
+## 2026-10-01 20:12
+
+### 变更
+- `frontend/.dockerignore` — 排除前端镜像不需要的本地产物。
+- `frontend/.gitignore` — 保留脚手架生成的前端忽略规则。
+- `frontend/.oxlintrc.json` — 保留 React 与 TypeScript lint 规则。
+- `frontend/Dockerfile` — 使用 Node.js 22 安装锁定依赖并启动 Vite。
+- `frontend/README.md` — 记录容器内构建、检查和启动命令。
+- `frontend/index.html` — 设置中文页面语言、产品标题和说明。
+- `frontend/package.json` — 增加 Material UI、图标和 Emotion 依赖。
+- `frontend/package-lock.json` — 锁定前端依赖版本。
+- `frontend/src/App.tsx` — 实现 Material UI 首页、禁用提问框及后端健康状态展示。
+- `frontend/src/index.css` — 添加最小全局布局样式。
+- `frontend/src/main.tsx` — 配置 Material UI 主题和基础样式。
+- `frontend/tsconfig.app.json` — 保留页面 TypeScript 严格配置。
+- `frontend/tsconfig.json` — 保留 TypeScript 项目引用入口。
+- `frontend/tsconfig.node.json` — 保留 Vite 配置的 TypeScript 设置。
+- `frontend/vite.config.ts` — 固定开发端口并将 `/health` 代理到后端容器。
+- `compose.yaml` — 增加前端服务、代码挂载、端口、依赖关系和健康检查。
+- `docs/development-workflow.md` — 将前端加入统一构建、日常开发和四服务健康检查流程。
+- `TODO.md` — 按 Material UI 决定更新任务 04，并记录完成结果。
+- `REVIEW.md` — 追加任务 04 完成记录。
+
+### 原因
+- 完成用户要求的主要前端工作，使首版页面通过 Docker 运行并展示后端连接状态。
+
+### 验证
+- `docker compose config --quiet` → 配置有效。
+- `docker compose build frontend` → Node.js 22 前端镜像构建成功。
+- `docker compose run --rm --no-deps frontend npm run build` → TypeScript 与 Vite 构建通过。
+- `docker compose run --rm --no-deps frontend npm run lint` → 0 warnings、0 errors。
+- `docker compose run --rm backend python -m pytest` → 3 passed，保留一条上游弃用警告。
+- `docker compose ps` → frontend、backend、mysql、qdrant 均为 healthy。
+- 访问前端 `/health` → 返回 `{"status":"ok","service":"imm-agent"}`。
+- 浏览器检查后端运行和停止场景 → 分别显示“服务正常”和“服务未连接”，断开时出现提示。
+
+### 未处理
+- 提问框按任务范围保持禁用；聊天请求、来源列表和多轮会话留给后续任务。
+- 未增加登录、路由或其他 UI 组件库。
