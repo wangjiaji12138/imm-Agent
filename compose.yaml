@@ -1,0 +1,65 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      IMM_AGENT_ENVIRONMENT: development
+      IMM_AGENT_LOG_LEVEL: ${IMM_AGENT_LOG_LEVEL:-INFO}
+      IMM_AGENT_MYSQL_HOST: mysql
+      IMM_AGENT_MYSQL_PORT: 3306
+      IMM_AGENT_MYSQL_DATABASE: ${IMM_AGENT_MYSQL_DATABASE}
+      IMM_AGENT_MYSQL_USER: ${IMM_AGENT_MYSQL_USER}
+      IMM_AGENT_MYSQL_PASSWORD: ${IMM_AGENT_MYSQL_PASSWORD}
+      IMM_AGENT_QDRANT_URL: http://qdrant:6333
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${IMM_AGENT_MYSQL_DATABASE}
+      MYSQL_USER: ${IMM_AGENT_MYSQL_USER}
+      MYSQL_PASSWORD: ${IMM_AGENT_MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${IMM_AGENT_MYSQL_ROOT_PASSWORD}
+    ports:
+      - "127.0.0.1:${IMM_AGENT_MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant:v1.15.5
+    ports:
+      - "127.0.0.1:6333:6333"
+      - "127.0.0.1:6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/6333'"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  qdrant_data:

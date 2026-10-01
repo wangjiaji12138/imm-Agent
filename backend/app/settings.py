@@ -19,6 +19,12 @@ class Settings(BaseSettings):
 
     environment: Literal["development", "test", "production"] = "development"
     log_level: str = Field(default="INFO", min_length=1)
+    mysql_host: str = "127.0.0.1"
+    mysql_port: int = Field(default=3306, ge=1, le=65535)
+    mysql_database: str = "imm_agent"
+    mysql_user: str = "imm_agent"
+    mysql_password: str = ""
+    qdrant_url: str = "http://127.0.0.1:6333"
 
 
 @lru_cache
@@ -26,4 +32,3 @@ def get_settings() -> Settings:
     """Return one validated settings instance per process."""
 
     return Settings()
-

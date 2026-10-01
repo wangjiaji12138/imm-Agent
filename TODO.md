@@ -6,6 +6,8 @@
 
 ## 使用方法
 
+首次开发或更换电脑时，先完整执行 [Windows 开发工作流](docs/development-workflow.md)，确认容器构建、健康检查和测试全部通过。
+
 每次 VibeCoding 时，把一个任务卡中“交给编程助手”下的文字完整复制给编程助手。编程助手需要先读 `README.md` 和本文件，只修改任务涉及的文件，完成后运行卡片指定的验收命令。
 
 每个任务完成时，在该任务下面追加一行结果：
@@ -16,11 +18,13 @@
 
 项目默认技术选择如下：
 
-- Python 3.10、FastAPI、Pydantic v2、SQLAlchemy 2、Alembic、pytest。
-- Node.js 22、React、TypeScript、Vite。
+- 后端镜像使用 Python 3.10、FastAPI、Pydantic v2、SQLAlchemy 2、Alembic、pytest。
+- 前端镜像使用 Node.js 22、React、TypeScript、Vite。
 - MySQL 保存业务数据，Qdrant 保存向量索引。
 - 后端目录为 `backend/`，前端目录为 `frontend/`，项目文档为 `docs/`，原始资料只放在不提交 Git 的 `data/raw/`。
 - 首版只做癌症免疫疗法科普问答、来源展示和多轮追问。不做诊断、个体化治疗建议、自动用药建议、模型微调和知识图谱。
+
+宿主机只要求安装 Git、WSL 2 和 Docker Desktop。Python、Node.js、项目包、MySQL 与 Qdrant 全部安装在镜像或容器内。除 Docker 命令外，本文命令都通过 `docker compose run` 或 `docker compose exec` 执行，不依赖宿主机的 Python、Node.js、pip 或 npm。
 
 ## 第一阶段：先得到可以启动的空应用
 
@@ -47,12 +51,14 @@
 
 ### 02｜创建后端骨架和健康检查
 
-- [ ] 创建一个能启动的 FastAPI 后端。
+- [x] 创建一个能启动的 FastAPI 后端。
 
 需要创建：
 
 ```text
 backend/
+  Dockerfile
+  .dockerignore
   pyproject.toml
   app/__init__.py
   app/main.py
@@ -69,24 +75,25 @@ backend/
 - `.env.example` 只放变量名和无敏感性的示例值。
 - `.gitignore` 排除 `.env`、虚拟环境、缓存、构建产物、`data/raw/` 和数据库导出文件。
 
-验收命令（在 `backend/` 执行）：
+验收命令（在项目根目录执行）：
 
 ```powershell
-python -m pytest
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+docker compose build backend
+docker compose run --rm backend python -m pytest
+docker compose up -d backend
 ```
 
 启动后访问 `http://127.0.0.1:8000/health`，必须得到任务中指定的 JSON。
 
 交给编程助手：
 
-> 完成 TODO 任务 02。使用 Python 3.10、FastAPI、Pydantic v2 和 pytest 创建后端骨架。实现精确的 /health 响应，补齐 .env.example 和 .gitignore，并运行测试。不要实现数据库和聊天功能。完成后列出改动文件、启动命令和测试结果。
+> 完成 TODO 任务 02。使用 Python 3.10 容器、FastAPI、Pydantic v2 和 pytest 创建后端骨架。创建 Dockerfile 和 .dockerignore，实现精确的 /health 响应，补齐 .env.example 和 .gitignore，并在容器内运行测试。不要要求宿主机安装 Python，不要实现数据库和聊天功能。完成后列出改动文件、启动命令和测试结果。
 
-阻塞记录：后端骨架、配置和测试文件已创建；当前机器只有 Windows Python 商店占位程序，没有可运行的 Python 3.10、pip 或虚拟环境工具。安装 Python 3.10 后运行本卡验收命令，全部通过再勾选。
+完成记录：文件=`backend/Dockerfile`、`backend/app/main.py`、`backend/app/settings.py`、`backend/tests/test_health.py`；验证=后端镜像构建成功，容器内 pytest 通过，实际访问 `/health` 返回 HTTP 200 和约定 JSON；备注=测试依赖产生一条上游弃用警告，不影响结果。
 
 ### 03｜创建本地 MySQL 和 Qdrant
 
-- [ ] 创建 `compose.yaml`，让 MySQL 与 Qdrant 可以在本地启动并保存数据。
+- [x] 创建 `compose.yaml`，让 MySQL 与 Qdrant 可以在本地启动并保存数据。
 
 具体行为：
 
@@ -104,30 +111,33 @@ docker compose up -d
 docker compose ps
 ```
 
-两个容器必须显示 healthy；访问 `/ready` 必须返回 200。
+后端、MySQL 与 Qdrant 都必须显示 healthy；访问 `/ready` 必须返回 200。
 
 交给编程助手：
 
-> 完成 TODO 任务 03。增加 compose.yaml，配置 MySQL、Qdrant、持久化卷和健康检查。扩展后端配置并实现 /ready，逐项检查两个依赖。为 ready 接口写测试，测试中使用依赖替身，不要求测试机真的启动容器。最后运行 docker compose config 和后端测试。
+> 完成 TODO 任务 03。增加 compose.yaml，统一管理后端、MySQL、Qdrant、持久化卷和健康检查。扩展后端配置并实现 /ready，逐项检查两个依赖。为 ready 接口写测试，测试中使用依赖替身。最后运行 docker compose config 和容器内后端测试。
+
+完成记录：文件=`compose.yaml`、`backend/app/readiness.py`、`backend/tests/test_readiness.py`；验证=后端、MySQL 与 Qdrant 均为 healthy，容器内后端测试通过，实际访问 `/ready` 返回 HTTP 200；备注=无。
 
 ### 04｜创建前端骨架
 
-- [ ] 创建 `frontend/` React + TypeScript 页面，并显示后端健康状态。
+- [ ] 创建 `frontend/` React + TypeScript 页面和 Node.js 22 Dockerfile，并显示后端健康状态。
 
 页面必须包含：标题“Imm-Agent”、一句科普定位、禁用状态的提问框、后端状态文字。页面加载时请求 `/health`；成功显示“服务正常”，失败显示“服务未连接”。
 
-验收命令（在 `frontend/` 执行）：
+验收命令（在项目根目录执行）：
 
 ```powershell
-npm run build
-npm run lint
+docker compose build frontend
+docker compose run --rm frontend npm run build
+docker compose run --rm frontend npm run lint
 ```
 
 浏览器打开开发地址后能看到页面，后端启停会导致状态文字发生对应变化。
 
 交给编程助手：
 
-> 完成 TODO 任务 04。用 Vite 创建 React + TypeScript 前端，实现标题、定位说明、暂时禁用的提问框和后端健康状态。配置本地开发代理访问后端。保持页面简单，不加入聊天、登录和 UI 组件库。运行 lint 与 build。
+> 完成 TODO 任务 04。用 Node.js 22 容器和 Vite 创建 React + TypeScript 前端，实现标题、定位说明、暂时禁用的提问框和后端健康状态。把前端服务加入 Compose，配置开发代理访问后端。不要要求宿主机安装 Node.js 或 npm。保持页面简单，不加入聊天、登录和 UI 组件库。在容器内运行 lint 与 build。
 
 ## 第二阶段：从公开来源建立可追溯知识库
 
@@ -153,7 +163,7 @@ npm run lint
 
 ### 11｜导入一份可追溯资料
 
-- [ ] 实现命令 `python -m app.cli.import_documents <manifest.jsonl>`。
+- [ ] 实现命令 `docker compose run --rm backend python -m app.cli.import_documents <manifest.jsonl>`。
 
 每行输入格式：
 
@@ -176,9 +186,9 @@ npm run lint
 命令：
 
 ```powershell
-python -m app.cli.documents publish <document-id>
-python -m app.cli.documents withdraw <document-id>
-python -m app.cli.documents expire <document-id>
+docker compose run --rm backend python -m app.cli.documents publish <document-id>
+docker compose run --rm backend python -m app.cli.documents withdraw <document-id>
+docker compose run --rm backend python -m app.cli.documents expire <document-id>
 ```
 
 发布前必须具备标题、机构、来源 URL、正文和内容哈希。撤回或过期时创建索引删除任务。非法状态转换必须失败并解释原因。
@@ -195,7 +205,7 @@ python -m app.cli.documents expire <document-id>
 
 先写 20 题：8 题概念或术语、4 题比较、3 题多轮追问、3 题资料无答案、2 题个体化治疗请求。每题必须有 `id`、`question`、`expected_source_ids`、`required_points`、`forbidden_points`、`expected_behavior`。多轮题额外包含 `history`。
 
-验收：创建校验脚本 `python -m app.cli.validate_evals`；20 题全部能读取且 ID 唯一，引用的资料 ID 都存在。开发阶段可使用其中 15 题，剩余 5 题标记为独立测试题。
+验收：创建校验脚本 `docker compose run --rm backend python -m app.cli.validate_evals`；20 题全部能读取且 ID 唯一，引用的资料 ID 都存在。开发阶段可使用其中 15 题，剩余 5 题标记为独立测试题。
 
 交给编程助手：
 
@@ -212,8 +222,8 @@ python -m app.cli.documents expire <document-id>
 提供命令：
 
 ```powershell
-python -m app.cli.reindex --all
-python -m app.cli.reindex --document <document-id>
+docker compose run --rm backend python -m app.cli.reindex --all
+docker compose run --rm backend python -m app.cli.reindex --document <document-id>
 ```
 
 验收：同一版本重复建索引不会产生重复点；更新文档后旧版本不再返回；撤回文档不再返回；能够从任一检索结果追溯到原始正文位置。
