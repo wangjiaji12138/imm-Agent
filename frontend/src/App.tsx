@@ -14,7 +14,7 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import {
   Alert, Button, CardActionArea, Chip, Dialog, DialogContent,
-  DialogTitle, IconButton, MenuItem, Paper, Tab, Tabs, TextField,
+  DialogTitle, IconButton, MenuItem, Paper, TextField,
   Tooltip, Typography,
 } from '@mui/material'
 import './App.css'
@@ -41,7 +41,6 @@ function App() {
   const [leftTherapy, setLeftTherapy] = useState<string>(therapies[0])
   const [rightTherapy, setRightTherapy] = useState<string>(therapies[2])
   const [dimension, setDimension] = useState<string>(dimensions[0])
-  const [evidenceTab, setEvidenceTab] = useState(0)
   const [dialog, setDialog] = useState<'guide' | 'sources' | null>(null)
   const [serviceStatus, setServiceStatus] = useState<ServiceStatus>('checking')
   const [healthAttempt, setHealthAttempt] = useState(0)
@@ -86,7 +85,6 @@ function App() {
     setLeftTherapy(therapies[0])
     setRightTherapy(therapies[2])
     setDimension(dimensions[0])
-    setEvidenceTab(0)
   }
 
   const statusLabel = serviceStatus === 'checking' ? '正在检查服务' : serviceStatus === 'online' ? '服务正常' : '服务未连接'
@@ -130,34 +128,45 @@ function App() {
         </header>
 
         <main id="main-content">
-          <section className="hero" aria-labelledby="hero-title">
-            <div className="hero-copy">
-              <span className="eyebrow"><span />让复杂知识，更容易理解</span>
-              <Typography component="h1" id="hero-title">探索免疫疗法，<br /><span>每一步都有据可循。</span></Typography>
-              <p>从一个概念，到不同疗法的比较。<br className="desktop-break" />用通俗解释理解知识，用原文来源核查信息。</p>
-              <div className="hero-tags"><span><ChatBubbleOutlineRoundedIcon />通俗解释</span><span><CompareArrowsRoundedIcon />多角度比较</span><span><VerifiedOutlinedIcon />来源可追溯</span></div>
-            </div>
-            <div className="knowledge-orbit" aria-hidden="true">
-              <div className="orbit-ring outer" /><div className="orbit-ring inner" />
-              <div className="orbit-center"><AutoAwesomeRoundedIcon /></div>
-              <span className="orbit-node node-one"><DescriptionOutlinedIcon /></span>
-              <span className="orbit-node node-two"><ScienceOutlinedIcon /></span>
-              <span className="orbit-node node-three"><VerifiedOutlinedIcon /></span>
-              <i className="orbit-dot dot-one" /><i className="orbit-dot dot-two" />
-              <span className="orbit-caption">连接问题与知识</span>
-            </div>
-          </section>
+          <div className="workspace-content" tabIndex={0} role="region" aria-label="对话与资料来源">
+            <section className="hero" aria-labelledby="hero-title">
+              <div className="hero-copy">
+                <span className="eyebrow"><span />让复杂知识，更容易理解</span>
+                <Typography component="h1" id="hero-title">探索免疫疗法，<br /><span>每一步都有据可循。</span></Typography>
+                <p>从一个概念，到不同疗法的比较。<br className="desktop-break" />用通俗解释理解知识，用原文来源核查信息。</p>
+                <div className="hero-tags"><span><ChatBubbleOutlineRoundedIcon />通俗解释</span><span><CompareArrowsRoundedIcon />多角度比较</span><span><VerifiedOutlinedIcon />来源可追溯</span></div>
+              </div>
+              <div className="knowledge-orbit" aria-hidden="true">
+                <div className="orbit-ring outer" /><div className="orbit-ring inner" />
+                <div className="orbit-center"><AutoAwesomeRoundedIcon /></div>
+                <span className="orbit-node node-one"><DescriptionOutlinedIcon /></span>
+                <span className="orbit-node node-two"><ScienceOutlinedIcon /></span>
+                <span className="orbit-node node-three"><VerifiedOutlinedIcon /></span>
+                <i className="orbit-dot dot-one" /><i className="orbit-dot dot-two" />
+                <span className="orbit-caption">连接问题与知识</span>
+              </div>
+            </section>
 
-          {serviceStatus === 'offline' && <Alert severity="warning" className="connection-alert">服务暂未连接，你仍可以编辑问题草稿。稍后可在右上角重新检查。</Alert>}
+            {serviceStatus === 'offline' && <Alert severity="warning" className="connection-alert">服务暂未连接，你仍可以编辑问题草稿。稍后可在右上角重新检查。</Alert>}
 
-          <div className="content-grid">
-            <div className="question-column">
-              <Paper variant="outlined" className="composer">
-                <div className="card-heading">
-                  <div><span className="section-kicker">YOUR QUESTION · 你的问题</span><Typography component="h2" variant="h6">{currentMode.title}</Typography></div>
-                  <Chip label="界面预览" size="small" className="preview-chip" />
-                </div>
-                <p className="muted composer-description">{currentMode.description}</p>
+            <div className="content-grid">
+              <div className="question-column">
+                <Paper variant="outlined" className="conversation-preview" component="section" aria-label="对话布局预览">
+                  <div className="card-heading">
+                    <div><span className="section-kicker">CONVERSATION · 对话</span><Typography component="h2" variant="h6">{currentMode.title}</Typography></div>
+                    <Chip label="界面预览" size="small" className="preview-chip" />
+                  </div>
+                  <p className="muted composer-description">{currentMode.description}</p>
+                  <div className="message-preview user-message">
+                    <strong>你</strong><p>提交后，你的问题会显示在这里。</p>
+                  </div>
+                  <div className="message-preview assistant-message">
+                    <strong><AutoAwesomeRoundedIcon fontSize="small" />Imm-Agent</strong>
+                    <p>回答将接在问题下方，多轮对话按时间顺序排列。以下为回答结构预览。</p>
+                    <div className="answer-outline">{answerSections.map(([number, title, detail]) => <div key={number}><span>{number}</span><div><strong>{title}</strong><p>{detail}</p></div></div>)}</div>
+                  </div>
+                </Paper>
+
                 {mode === 'compare' && (
                   <div className="comparison-builder">
                     <div className="comparison-pair">
@@ -171,71 +180,62 @@ function App() {
                   </div>
                 )}
                 {mode === 'research' && <Alert severity="info" icon={<ScienceOutlinedIcon />} className="research-note">研究进展将以已收录资料的日期和研究阶段为准。</Alert>}
-                <TextField className="question-input" fullWidth multiline minRows={4} value={draft}
-                  inputRef={inputRef} label="你想了解什么？" placeholder="例如：PD-1 和 PD-L1 有什么关系？"
-                  onChange={(event) => setDraft(event.target.value)}
-                  slotProps={{ htmlInput: { maxLength: 500, 'aria-describedby': 'draft-notice' } }}
-                />
-                <div className="composer-bottom"><span className="draft-counter">{draft.length} / 500</span><Button variant="contained" disabled endIcon={<SendRoundedIcon />} disableElevation>发送问题</Button></div>
-                <div className="draft-notice" id="draft-notice"><span className="small-dot" />问答即将开放 · 目前可以编辑草稿，暂不发送或生成回答</div>
-              </Paper>
 
-              <section className="prompt-section" aria-labelledby="prompt-title">
-                <div className="section-heading"><Typography id="prompt-title" component="h2" variant="subtitle1">试着从这些问题开始</Typography><span>点击填入提问框</span></div>
-                <div className="prompt-grid">
-                  {currentMode.prompts.map((question, index) => (
-                    <Paper variant="outlined" key={question} className="prompt-card">
-                      <CardActionArea onClick={() => fillQuestion(question)}>
-                        <span className={'prompt-number tone-' + index}>0{index + 1}</span>
-                        <Typography component="p">{question}</Typography>
-                        <ArrowForwardRoundedIcon className="prompt-arrow" fontSize="small" />
-                      </CardActionArea>
-                    </Paper>
-                  ))}
-                </div>
-              </section>
+                <section className="prompt-section" aria-labelledby="prompt-title">
+                  <div className="section-heading"><Typography id="prompt-title" component="h2" variant="subtitle1">试着从这些问题开始</Typography><span>点击填入提问框</span></div>
+                  <div className="prompt-grid">
+                    {currentMode.prompts.map((question, index) => (
+                      <Paper variant="outlined" key={question} className="prompt-card">
+                        <CardActionArea onClick={() => fillQuestion(question)}>
+                          <span className={'prompt-number tone-' + index}>0{index + 1}</span>
+                          <Typography component="p">{question}</Typography>
+                          <ArrowForwardRoundedIcon className="prompt-arrow" fontSize="small" />
+                        </CardActionArea>
+                      </Paper>
+                    ))}
+                  </div>
+                </section>
 
-              <section className="workflow-strip" aria-label="问答功能开放后的处理流程">
-                <div className="workflow-title"><AutoAwesomeRoundedIcon /><strong>一份可追溯的回答</strong><span>功能规划</span></div>
-                <div className="workflow-steps">{['理解问题', '检索已发布资料', '解释并附上来源'].map((step, index) => <div key={step}><span>{index + 1}</span>{step}{index < 2 && <ArrowForwardRoundedIcon fontSize="small" />}</div>)}</div>
-              </section>
-            </div>
+                <section className="workflow-strip" aria-label="问答功能开放后的处理流程">
+                  <div className="workflow-title"><AutoAwesomeRoundedIcon /><strong>一份可追溯的回答</strong><span>功能规划</span></div>
+                  <div className="workflow-steps">{['理解问题', '检索已发布资料', '解释并附上来源'].map((step, index) => <div key={step}><span>{index + 1}</span>{step}{index < 2 && <ArrowForwardRoundedIcon fontSize="small" />}</div>)}</div>
+                </section>
+              </div>
 
-            <aside className="evidence-column" aria-label="回答与来源预览">
-              <Paper variant="outlined" className="evidence-card">
-                <div className="evidence-title"><span className="evidence-icon"><DescriptionOutlinedIcon /></span><div><Typography component="h2" variant="subtitle1">回答与证据</Typography><p>从结论，回到原文</p></div></div>
-                <Tabs value={evidenceTab} onChange={(_, value: number) => setEvidenceTab(value)} variant="fullWidth" aria-label="回答与来源">
-                  <Tab id="evidence-tab-0" aria-controls="evidence-panel-0" label="回答结构" />
-                  <Tab id="evidence-tab-1" aria-controls="evidence-panel-1" label="资料来源" />
-                </Tabs>
-                <div className="evidence-content" role="tabpanel" id={'evidence-panel-' + evidenceTab} aria-labelledby={'evidence-tab-' + evidenceTab}>
-                  {evidenceTab === 0 ? (
-                    <>
-                      <div className="empty-state"><AutoAwesomeRoundedIcon /><strong>等待你的第一个问题</strong><p>问答开放后，回答会在这里展开。以下为结构预览。</p></div>
-                      <div className="answer-outline">{answerSections.map(([number, title, detail]) => <div key={number}><span>{number}</span><div><strong>{title}</strong><p>{detail}</p></div></div>)}</div>
-                    </>
-                  ) : (
+              <aside className="evidence-column" aria-label="资料来源预览">
+                <Paper variant="outlined" className="evidence-card">
+                  <div className="evidence-title"><span className="evidence-icon"><DescriptionOutlinedIcon /></span><div><Typography component="h2" variant="subtitle1">资料来源</Typography><p>从结论，回到原文</p></div></div>
+                  <div className="evidence-content">
                     <div className="empty-state source-empty"><DescriptionOutlinedIcon /><strong>暂无引用资料</strong><p>收到回答后，这里将展示支持关键结论的来源、日期与原文片段。</p><Button size="small" onClick={() => setDialog('sources')}>来源包含哪些信息？</Button></div>
-                  )}
-                </div>
-              </Paper>
-              <Paper variant="outlined" className="evidence-legend">
-                <div className="legend-heading"><VerifiedOutlinedIcon /><strong>看懂证据状态</strong></div>
-                <p className="muted">以下是回答时可能出现的状态。</p>
-                <div><span className="legend-dot sufficient" /><strong>证据充足</strong><span>关键结论有资料支持</span></div>
-                <div><span className="legend-dot insufficient" /><strong>证据不足</strong><span>明确说明资料的缺口</span></div>
-                <div><span className="legend-dot conflicting" /><strong>资料冲突</strong><span>分别呈现不同来源观点</span></div>
-              </Paper>
-            </aside>
+                  </div>
+                </Paper>
+                <Paper variant="outlined" className="evidence-legend">
+                  <div className="legend-heading"><VerifiedOutlinedIcon /><strong>看懂证据状态</strong></div>
+                  <p className="muted">以下是回答时可能出现的状态。</p>
+                  <div><span className="legend-dot sufficient" /><strong>证据充足</strong><span>关键结论有资料支持</span></div>
+                  <div><span className="legend-dot insufficient" /><strong>证据不足</strong><span>明确说明资料的缺口</span></div>
+                  <div><span className="legend-dot conflicting" /><strong>资料冲突</strong><span>分别呈现不同来源观点</span></div>
+                </Paper>
+              </aside>
+            </div>
+            <footer className="workspace-footer"><span>Imm-Agent · 癌症免疫疗法科普</span><span>科普信息不能替代专业医生的诊疗建议。</span></footer>
           </div>
-          <footer className="workspace-footer"><span>Imm-Agent · 癌症免疫疗法科普</span><span>科普信息不能替代专业医生的诊疗建议。</span></footer>
+          <Paper variant="outlined" className="composer" component="section" aria-label="输入问题">
+            <TextField className="question-input" fullWidth multiline minRows={2} maxRows={5} value={draft}
+              inputRef={inputRef} label="你想了解什么？" placeholder="例如：PD-1 和 PD-L1 有什么关系？"
+              onChange={(event) => setDraft(event.target.value)}
+              slotProps={{ htmlInput: { maxLength: 500, 'aria-describedby': 'draft-notice' } }}
+            />
+            <div className="composer-bottom"><span className="draft-counter">{draft.length} / 500</span><Button variant="contained" disabled endIcon={<SendRoundedIcon />} disableElevation>发送问题</Button></div>
+            <div className="draft-notice" id="draft-notice"><span className="small-dot" />问答即将开放 · 目前可以编辑草稿，暂不发送或生成回答</div>
+          </Paper>
         </main>
       </div>
 
       <Dialog open={dialog !== null} onClose={() => setDialog(null)} maxWidth="sm" fullWidth aria-labelledby="guide-title">
         <DialogTitle id="guide-title" sx={{ pr: 7 }}>{dialog === 'sources' ? '让每一条引用都可核查' : '如何使用 Imm-Agent'}<IconButton aria-label="关闭说明" onClick={() => setDialog(null)} sx={{ position: 'absolute', right: 12, top: 12 }}><CloseRoundedIcon /></IconButton></DialogTitle>
         <DialogContent className="guide-content">
-          {dialog === 'sources' ? <><p>资料来源将包含标题、发布机构、资料日期、支持的结论和原文片段，并提供原始链接。</p><p>当前尚无回答与引用，不展示示例文献作为真实证据。</p></> : <><p>选择科普问答、疗法比较或研究进展，点击示例问题，或自行编写问题。疗法比较可以先选择两个对象与比较维度。</p><p>目前可编辑草稿、切换预览和检查服务连接；发送、生成回答和历史会话尚未开放。刷新页面会清除草稿，“新建会话”会重置当前草稿。</p><p>服务连接正常仅表示基础服务可用，不代表问答已开放。未来回答会以已审核资料为依据，不提供个体化诊断、治疗选择或剂量建议。</p></>}
+          {dialog === 'sources' ? <><p>资料来源将包含标题、发布机构、资料日期、支持的结论和原文片段，并提供原始链接。</p><p>当前尚无回答与引用，不展示示例文献作为真实证据。</p></> : <><p>选择科普问答、疗法比较或研究进展，点击示例问题，或在底部输入框编写问题。疗法比较可以先选择两个对象与比较维度。</p><p>问答开放后，问题与回答会按时间顺序显示在输入框上方，资料来源单独展示。目前可编辑草稿和检查服务连接；发送、生成回答和历史会话尚未开放。刷新页面会清除草稿，“新建会话”会重置当前草稿。</p><p>服务连接正常仅表示基础服务可用，不代表问答已开放。未来回答会以已审核资料为依据，不提供个体化诊断、治疗选择或剂量建议。</p></>}
         </DialogContent>
       </Dialog>
     </div>

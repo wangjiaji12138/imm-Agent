@@ -336,3 +336,47 @@
 ### Not touched
 - `frontend/src/App.tsx` 已有未提交修改，本次未改动；发送问答与历史会话仍未开放。
 - Vite 提示 JS 包超过 500 kB，本次未调整拆包；桌面自动化不可用，未完成截图检查。
+
+---
+
+## 2026-10-01 21:21
+
+### Changed
+- `frontend/src/App.css` — 限制侧栏与会话摘要的 flex 最小宽度，使长草稿以省略号显示。
+- `REVIEW.md` — 追加本次修复记录。
+
+### Why
+- 修复输入连续文字时左栏被草稿内容撑宽的问题。
+
+### Verify
+- `docker compose exec -T frontend npm run build` → 构建通过。
+- `docker compose exec -T frontend npm run lint` → 0 warnings、0 errors。
+- `git diff --check` → 无空白错误。
+
+### Not touched
+- `frontend/src/App.tsx` 及问答功能未改动；桌面自动化仍不可用，未完成截图复核。
+
+---
+
+## 2026-10-01 21:31
+
+### Changed
+- `frontend/src/App.tsx` — 将问题与回答结构预览放在同一对话区，输入框移到底部，右侧仅保留资料来源和证据状态；同步使用指南。
+- `frontend/src/App.css` — 使用视口高度和独立滚动区域固定底部输入框，添加问答预览样式并适配窄屏，删除不再使用的来源标签页样式。
+- `REVIEW.md` — 追加本次布局调整记录。
+
+### Why
+- 按用户选择，将布局调整为上方依次显示用户问题和助手回答，底部持续显示输入框。
+
+### Verify
+- `docker compose exec -T frontend npm run build` → TypeScript 与 Vite 构建通过。
+- `docker compose exec -T frontend npm run lint` → 0 warnings、0 errors。
+- `git diff --check` → 无空白错误。
+- `(Invoke-WebRequest -UseBasicParsing http://127.0.0.1:5173/).StatusCode` → 200。
+- `(Invoke-WebRequest -UseBasicParsing http://127.0.0.1:5173/health).Content` → 返回 status 为 ok、service 为 imm-agent。
+- 待浏览器复核：分别以桌面与手机宽度打开页面，滚动对话与来源区域 → 输入框保持在底部；点击示例问题 → 填入底部输入框；新建会话 → 清空草稿。
+
+### Not touched
+- 后端问答接口、真实发送与历史会话仍未实现，页面明确标记为预览，发送按钮保持禁用。
+- 保留已有侧栏长草稿宽度修复与历史 REVIEW 记录；未改动后端和任务清单。
+- Vite 仍提示 JS 包超过 500 kB，未调整拆包；浏览器工具无可用连接，尚未完成截图和交互复核。
