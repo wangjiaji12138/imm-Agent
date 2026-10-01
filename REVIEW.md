@@ -448,3 +448,27 @@
 ### Not touched
 - 未修改卡片文字、输入框、已有紧凑间距或业务逻辑；未设置固定列高。
 - 浏览器自动化连接不可用，未完成实际截图复核。
+
+---
+
+## 2026-10-01 21:58
+
+### Changed
+- `docs/technical-summary.md` — 按 README 的 14 个技术方向总结当前实现，记录前端结构、服务边界、验证结果和后续任务。
+- `README.md` — 增加技术总结入口。
+- `REVIEW.md` — 追加本次文档整理记录。
+
+### Why
+- 前端页面阶段基本完成，按用户要求形成与 README 技术栈对应的 Markdown 总结。
+
+### Verify
+- `git diff --check` → 无空白错误；打开 README 的“技术栈与阶段实现总结”链接 → 能定位新文档并核对代码链接。
+- `docker compose exec -T frontend npm run build` → 构建通过；`docker compose exec -T frontend npm run lint` → 0 warnings、0 errors。
+- `docker compose exec -T backend python -m pytest` → 3 passed、1 条依赖弃用警告。
+- `docker compose config --quiet` → 配置有效；`docker compose ps --format json` → 四个服务均 healthy。
+- `(Invoke-WebRequest -UseBasicParsing http://127.0.0.1:5173/health).Content` → status 为 ok；`(Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8000/ready).Content` → status 为 ready。
+
+### Not touched
+- 未修改应用代码、依赖或任务勾选状态；真实问答、来源与历史会话仍待实现。
+- TODO 开头“还没有应用代码”和任务 04 的禁用输入框记录与当前代码有差异，保留原文；本次总结按实际代码说明草稿可编辑、发送仍禁用。
+- 未修复后端测试的依赖弃用警告；未进行浏览器截图或交互复验。
