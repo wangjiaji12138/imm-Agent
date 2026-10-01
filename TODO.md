@@ -252,11 +252,14 @@ docker compose run --rm backend python -m app.cli.reindex --document <document-i
 
 内部响应格式：
 
+业务分类和字段约束以 `docs/mvp-scope.md` 第 4、5 节为准；拒绝、紧急引导、超范围和澄清分支在检索及知识结论生成之前处理，系统故障走接口错误响应。
+
 ```json
 {
+  "result_type": "answer|clarify|insufficient|refuse|out_of_scope|emergency",
   "answer": "回答正文",
   "citations": [{"chunk_id": "...", "claim": "该片段支持的结论"}],
-  "evidence_status": "sufficient|insufficient|conflicting",
+  "evidence_status": "sufficient|insufficient|conflicting|not_applicable",
   "follow_up_question": null
 }
 ```
