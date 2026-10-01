@@ -316,3 +316,23 @@
 ### 未处理
 - 提问框按任务范围保持禁用；聊天请求、来源列表和多轮会话留给后续任务。
 - 未增加登录、路由或其他 UI 组件库。
+
+---
+
+## 2026-10-01 21:17
+
+### Changed
+- `frontend/src/App.css` — 补齐工作台、侧栏、提问区、证据面板和移动端布局样式。
+- `REVIEW.md` — 追加本次样式修复记录。
+
+### Why
+- 修复页面引用缺失的样式文件，并完善不同屏幕宽度下的布局。
+
+### Verify
+- `docker compose exec -T frontend npm run build` → TypeScript 与 Vite 构建通过。
+- `docker compose exec -T frontend npm run lint` → 0 warnings、0 errors。
+- 访问 `http://127.0.0.1:5173/` 与 `/src/App.css` → 均返回 HTTP 200。
+
+### Not touched
+- `frontend/src/App.tsx` 已有未提交修改，本次未改动；发送问答与历史会话仍未开放。
+- Vite 提示 JS 包超过 500 kB，本次未调整拆包；桌面自动化不可用，未完成截图检查。
