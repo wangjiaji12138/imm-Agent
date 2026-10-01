@@ -13,7 +13,7 @@ import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded'
 import SendRoundedIcon from '@mui/icons-material/SendRounded'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import {
-  Alert, Button, CardActionArea, Chip, Dialog, DialogContent,
+  Alert, Button, CardActionArea, Dialog, DialogContent,
   DialogTitle, IconButton, MenuItem, Paper, TextField,
   Tooltip, Typography,
 } from '@mui/material'
@@ -27,11 +27,7 @@ const modes = [
 
 const therapies = ['CAR-T', 'TCR-T', '免疫检查点抑制剂']
 const dimensions = ['作用机制', '研究背景', '资料所述适用条件']
-const answerSections = [
-  ['01', '简短结论', '先直接回应你的问题'],
-  ['02', '通俗解释', '把概念和机制讲清楚'],
-  ['03', '条件与研究状态', '说明适用条件与资料时间'],
-]
+
 type Mode = (typeof modes)[number]['id']
 type ServiceStatus = 'checking' | 'online' | 'offline'
 
@@ -132,7 +128,7 @@ function App() {
             <section className="hero" aria-labelledby="hero-title">
               <div className="hero-copy">
                 <span className="eyebrow"><span />让复杂知识，更容易理解</span>
-                <Typography component="h1" id="hero-title">探索免疫疗法，<br /><span>每一步都有据可循。</span></Typography>
+                <Typography component="h1" id="hero-title">探索免疫疗法，<span>每一步都有据可循。</span></Typography>
                 <p>从一个概念，到不同疗法的比较。<br className="desktop-break" />用通俗解释理解知识，用原文来源核查信息。</p>
                 <div className="hero-tags"><span><ChatBubbleOutlineRoundedIcon />通俗解释</span><span><CompareArrowsRoundedIcon />多角度比较</span><span><VerifiedOutlinedIcon />来源可追溯</span></div>
               </div>
@@ -151,21 +147,10 @@ function App() {
 
             <div className="content-grid">
               <div className="question-column">
-                <Paper variant="outlined" className="conversation-preview" component="section" aria-label="对话布局预览">
-                  <div className="card-heading">
-                    <div><span className="section-kicker">CONVERSATION · 对话</span><Typography component="h2" variant="h6">{currentMode.title}</Typography></div>
-                    <Chip label="界面预览" size="small" className="preview-chip" />
-                  </div>
+                <section className="conversation-intro" aria-label="开始对话">
+                  <Typography component="h2" variant="subtitle1">{currentMode.title}</Typography>
                   <p className="muted composer-description">{currentMode.description}</p>
-                  <div className="message-preview user-message">
-                    <strong>你</strong><p>提交后，你的问题会显示在这里。</p>
-                  </div>
-                  <div className="message-preview assistant-message">
-                    <strong><AutoAwesomeRoundedIcon fontSize="small" />Imm-Agent</strong>
-                    <p>回答将接在问题下方，多轮对话按时间顺序排列。以下为回答结构预览。</p>
-                    <div className="answer-outline">{answerSections.map(([number, title, detail]) => <div key={number}><span>{number}</span><div><strong>{title}</strong><p>{detail}</p></div></div>)}</div>
-                  </div>
-                </Paper>
+                </section>
 
                 {mode === 'compare' && (
                   <div className="comparison-builder">
@@ -221,7 +206,7 @@ function App() {
             <footer className="workspace-footer"><span>Imm-Agent · 癌症免疫疗法科普</span><span>科普信息不能替代专业医生的诊疗建议。</span></footer>
           </div>
           <Paper variant="outlined" className="composer" component="section" aria-label="输入问题">
-            <TextField className="question-input" fullWidth multiline minRows={2} maxRows={5} value={draft}
+            <TextField className="question-input" fullWidth multiline size="small" minRows={1} maxRows={4} value={draft}
               inputRef={inputRef} label="你想了解什么？" placeholder="例如：PD-1 和 PD-L1 有什么关系？"
               onChange={(event) => setDraft(event.target.value)}
               slotProps={{ htmlInput: { maxLength: 500, 'aria-describedby': 'draft-notice' } }}

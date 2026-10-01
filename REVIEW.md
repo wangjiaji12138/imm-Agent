@@ -380,3 +380,50 @@
 - 后端问答接口、真实发送与历史会话仍未实现，页面明确标记为预览，发送按钮保持禁用。
 - 保留已有侧栏长草稿宽度修复与历史 REVIEW 记录；未改动后端和任务清单。
 - Vite 仍提示 JS 包超过 500 kB，未调整拆包；浏览器工具无可用连接，尚未完成截图和交互复核。
+
+---
+
+## 2026-10-01 21:40
+
+### Changed
+- `frontend/src/App.tsx` — 移除空会话的问题、回答占位气泡及回答大纲，将对话引导简化为标题与说明；欢迎标题自然换行，输入框默认一行、最多展开四行。
+- `frontend/src/App.css` — 缩小欢迎横幅、装饰图、推荐卡片及区块间距，减少底部输入区留白，同步窄屏样式并删除本次移除元素的专用样式。
+- `REVIEW.md` — 追加本次首屏布局调整与验证记录。
+
+### Why
+- 减少初始欢迎区和底部输入框占用，为首次打开页面时完整展示欢迎内容与推荐问题留出空间。
+
+### Verify
+- `docker compose exec -T frontend npm run build` → TypeScript 与 Vite 构建通过，无大包警告。
+- `docker compose exec -T frontend npm run lint` → 0 warnings、0 errors。
+- `git diff --check` → 无空白错误。
+- `(Invoke-WebRequest -UseBasicParsing http://127.0.0.1:5173/).StatusCode` → 200。
+- `(Invoke-WebRequest -UseBasicParsing http://127.0.0.1:5173/health).Content` → status 为 ok、service 为 imm-agent。
+- 已静态复核桌面与窄屏断点、内容区最小高度和滚动边界；输入区保持底部布局与独立高度限制。
+- 待浏览器验证：以 1366×768、1280×720 和手机尺寸打开页面，检查欢迎内容、全部推荐问题与输入区的可见范围；点击推荐问题应填入草稿，新建会话应清空草稿，长草稿应最多展开四行。
+
+### Not touched
+- 未改动后端、真实问答发送、历史会话和资料来源功能；发送按钮仍禁用。
+- 浏览器工具未发现可用连接，自动化运行时初始化失败，尚未完成真实视口截图与交互复核；窄屏或低高度视口仍允许滚动查看内容。
+- 保留所有既有 REVIEW 记录，未新增依赖或测试框架。
+
+---
+
+## 2026-10-01 21:44
+
+### Changed
+- `frontend/src/App.css` — 移除资料来源空状态的 253px 最小高度，改为图标与文字横向排列，压缩资料卡片、证据状态卡片的内边距与间距，保留全部文字和操作入口。
+- `REVIEW.md` — 追加右侧面板首屏高度修复记录。
+
+### Why
+- 用户截图显示资料来源空状态留白过大，将“看懂证据状态”推到输入框上方滚动区域之外；减少右侧面板占用高度。
+
+### Verify
+- `docker compose exec -T frontend npm run build` → TypeScript 与 Vite 构建通过。
+- `docker compose exec -T frontend npm run lint` → 0 warnings、0 errors。
+- `git diff --check` → 无空白错误。
+- 刷新 `http://127.0.0.1:5173/`，在截图对应的窗口尺寸检查右侧 → 空状态随内容收缩，三种证据状态应位于底部输入框上方；窄屏文字允许自然换行。
+
+### Not touched
+- 未改动欢迎区、推荐问题、输入框行为、后端与问答功能；保留前一轮未提交修改及既有日志。
+- 当前浏览器自动化不可用，本次依据用户截图和布局代码修复，尚未完成实际窗口截图复核。
