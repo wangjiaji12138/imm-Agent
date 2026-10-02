@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.modules.evaluation.schemas import EvaluationQuestion
 from app.modules.knowledge.service import source_readiness_error
+from app.modules.evaluation.retrieval import evaluate_retrieval, write_baseline
 
 
 def validate_evaluations(path: Path, session: Session) -> dict:

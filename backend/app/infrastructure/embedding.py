@@ -5,6 +5,7 @@ import math
 import httpx
 
 from app.core.settings import Settings
+from app.core.errors import DependencyTimeout
 
 
 class APIEmbedding:
@@ -24,9 +25,12 @@ class APIEmbedding:
         with httpx.Client(timeout=30.0) as client:
             for start in range(0, len(texts), self.batch_size):
                 batch = texts[start:start + self.batch_size]
-                response = client.post(self.url, headers={"Authorization": f"Bearer {self.api_key}"},
-                                       json={"model": self.model_name, "input": batch,
-                                             "dimensions": self.dimension, "encoding_format": "float"})
+                try:
+                    response = client.post(self.url, headers={"Authorization": f"Bearer {self.api_key}"},
+                                           json={"model": self.model_name, "input": batch,
+                                                 "dimensions": self.dimension, "encoding_format": "float"})
+                except httpx.TimeoutException as exc:
+                    raise DependencyTimeout("Embedding 服务超时") from exc
                 response.raise_for_status()
                 try:
                     data = sorted(response.json()["data"], key=lambda item: item["index"])

@@ -62,3 +62,27 @@ def eligible_chunks(session: Session, candidate_ids: list[str]) -> list[Chunk]:
         .execution_options(populate_existing=True)
     found = {chunk.id: chunk for chunk in session.scalars(statement)}
     return [found[key] for key in dict.fromkeys(candidate_ids) if key in found]
+
+
+def search_evidence(session: Session, candidate_versions: dict[str, str], *, language: str | None,
+                    document_id: str | None, published_from, published_to) -> dict[str, tuple[Chunk, Document]]:
+    """Verify vector candidates against current SQL publication, version and metadata."""
+    if not candidate_versions:
+        return {}
+    latest = select(DocumentVersion.document_id, func.max(DocumentVersion.version_number).label("number")) \
+        .group_by(DocumentVersion.document_id).subquery()
+    statement = select(Chunk, Document).join(DocumentVersion, Chunk.version_id == DocumentVersion.id) \
+        .join(Document, DocumentVersion.document_id == Document.id) \
+        .join(latest, (latest.c.document_id == Document.id) & (latest.c.number == DocumentVersion.version_number)) \
+        .where(Chunk.id.in_(candidate_versions), Document.status == "published") \
+        .execution_options(populate_existing=True)
+    if language is not None:
+        statement = statement.where(Document.language == language)
+    if document_id is not None:
+        statement = statement.where(Document.id == document_id)
+    if published_from is not None:
+        statement = statement.where(Document.published_at >= published_from)
+    if published_to is not None:
+        statement = statement.where(Document.published_at <= published_to)
+    return {chunk.id: (chunk, doc) for chunk, doc in session.execute(statement)
+            if chunk.version_id == candidate_versions[chunk.id]}

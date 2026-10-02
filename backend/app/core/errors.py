@@ -1,5 +1,5 @@
-"""PLANNED: 业务/依赖错误类型，不依赖 HTTP 或厂商 SDK。
+"""Dependency errors shared across business modules and adapters."""
 
-任务：02, 41, 42, ARCH-02；验收与边界见本模块 TODO.md。
-仅占位，未注册路由、建立连接或提供假实现。
-"""
+
+class DependencyTimeout(RuntimeError):
+    """An external dependency exceeded its configured timeout."""

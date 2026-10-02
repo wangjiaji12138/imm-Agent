@@ -158,7 +158,7 @@
     },
     {
       "path": "backend/app/modules/retrieval/schemas.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "20",
         "21"
@@ -194,7 +194,7 @@
     },
     {
       "path": "backend/app/modules/retrieval/service.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "20",
         "21"
@@ -362,7 +362,7 @@
     },
     {
       "path": "backend/app/modules/evaluation/retrieval.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "13",
         "21",
@@ -505,7 +505,7 @@
     },
     {
       "path": "backend/app/core/errors.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "02",
         "41",
@@ -615,7 +615,7 @@
     },
     {
       "path": "backend/app/cli/evaluate_retrieval.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "21"
       ],

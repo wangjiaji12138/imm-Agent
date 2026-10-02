@@ -2,6 +2,7 @@
 
 import httpx
 
+from app.core.errors import DependencyTimeout
 from app.core.settings import Settings
 
 
@@ -31,6 +32,16 @@ class QdrantStore:
             response = self.client.put(f"{self.base}/points", params={"wait": "true"},
                                        json={"points": points[start:start + 64]})
             response.raise_for_status()
+
+    def query(self, vector: list[float], limit: int, offset: int = 0) -> list[dict]:
+        try:
+            response = self.client.post(f"{self.base}/points/query", json={
+                "query": vector, "limit": limit, "offset": offset, "with_payload": True,
+            })
+        except httpx.TimeoutException as exc:
+            raise DependencyTimeout("Qdrant 检索超时") from exc
+        response.raise_for_status()
+        return response.json()["result"]["points"]
 
     def close(self) -> None:
         self.client.close()

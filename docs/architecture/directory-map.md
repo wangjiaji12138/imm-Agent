@@ -20,11 +20,11 @@
 | [backend/app/modules/knowledge/service.py](../../backend/app/modules/knowledge/service.py) | 现有实现 | 10 / 11 / 12 / ARCH-02 | 逐行导入与发布/撤回事务；对外统一资料服务 |
 | [backend/app/modules/knowledge/evidence.py](../../backend/app/modules/knowledge/evidence.py) | 现有实现 | 10 / 11 / 12 / ARCH-02 | 候选当前 published 状态与最新版本核验，返回只读片段；来源 HTTP 详情待任务 23 |
 | [backend/app/modules/knowledge/acquisition.py](../../backend/app/modules/knowledge/acquisition.py) | 现有实现 | 10 / 11 / 12 / ARCH-02 | NCI 白名单抓取、robots 核验和正文提取，供 CLI 调用 |
-| [backend/app/modules/retrieval/schemas.py](../../backend/app/modules/retrieval/schemas.py) | 待实现占位 | 20 / 21 | 检索输入、过滤器、候选和已核验 Evidence DTO |
+| [backend/app/modules/retrieval/schemas.py](../../backend/app/modules/retrieval/schemas.py) | 现有实现 | 20 / 21 | 检索输入、过滤器、候选和结果 DTO |
 | [backend/app/modules/retrieval/ports.py](../../backend/app/modules/retrieval/ports.py) | 现有实现 | 20 / 21 | Embedding 与 VectorStore 的最小接口，按任务 20 定义 |
 | [backend/app/modules/retrieval/chunking.py](../../backend/app/modules/retrieval/chunking.py) | 现有实现 | 20 / 21 | 按标题/段落/句子切分并保留 Unicode 字符区间 |
 | [backend/app/modules/retrieval/indexing.py](../../backend/app/modules/retrieval/indexing.py) | 现有实现 | 20 / 21 | 全量/单文档索引与删除任务处理、幂等和过时任务丢弃 |
-| [backend/app/modules/retrieval/service.py](../../backend/app/modules/retrieval/service.py) | 待实现占位 | 20 / 21 | search_knowledge；候选召回后必须通过 knowledge 证据核验 |
+| [backend/app/modules/retrieval/service.py](../../backend/app/modules/retrieval/service.py) | 现有实现 | 20 / 21 | search_knowledge；候选召回后通过 knowledge 证据核验 |
 | [backend/app/modules/answering/schemas.py](../../backend/app/modules/answering/schemas.py) | 待实现占位 | 22 | 六类 result_type 与 evidence_status 的响应约束 |
 | [backend/app/modules/answering/ports.py](../../backend/app/modules/answering/ports.py) | 待实现占位 | 22 | 模型 Provider 输入输出及超时错误接口 |
 | [backend/app/modules/answering/service.py](../../backend/app/modules/answering/service.py) | 待实现占位 | 22 | 空证据短路、最多一次超时重试、结构化生成 |
@@ -42,7 +42,7 @@
 | [backend/app/modules/feedback/service.py](../../backend/app/modules/feedback/service.py) | 待实现占位 | 32 / 41 | 归属验证、输入限制和重复提交更新 |
 | [backend/app/modules/evaluation/schemas.py](../../backend/app/modules/evaluation/schemas.py) | 现有实现 | 13 / 21 / 40 / ARCH-02 | EvaluationQuestion 与 Turn 格式、分类及分组约束 |
 | [backend/app/modules/evaluation/dataset.py](../../backend/app/modules/evaluation/dataset.py) | 现有实现 | 13 / 21 / 40 / ARCH-02 | 读取 JSONL、验证 ID/分组/已发布来源 |
-| [backend/app/modules/evaluation/retrieval.py](../../backend/app/modules/evaluation/retrieval.py) | 待实现占位 | 13 / 21 / 40 / ARCH-02 | 开发集检索基线、Top 5、Recall@5 和耗时 |
+| [backend/app/modules/evaluation/retrieval.py](../../backend/app/modules/evaluation/retrieval.py) | 现有实现 | 13 / 21 / 40 / ARCH-02 | 检索基线、Top 5、Recall@5 和耗时 |
 | [backend/app/modules/evaluation/answers.py](../../backend/app/modules/evaluation/answers.py) | 待实现占位 | 13 / 21 / 40 / ARCH-02 | 独立集端到端运行及逐条审查材料 |
 | [backend/app/modules/evaluation/metrics.py](../../backend/app/modules/evaluation/metrics.py) | 待实现占位 | 13 / 21 / 40 / ARCH-02 | 引用、证据不足行为、成功率、P95 和成本计算 |
 | [backend/app/modules/evaluation/reports.py](../../backend/app/modules/evaluation/reports.py) | 待实现占位 | 13 / 21 / 40 / ARCH-02 | 按运行 ID 写不可覆盖的版本报告与汇总 |
@@ -55,7 +55,7 @@
 | [backend/app/api/routes/sources.py](../../backend/app/api/routes/sources.py) | 待实现占位 | 23 / 32 / 42 / ARCH-02 | GET /api/sources/{chunk_id}，调用实时证据核验 |
 | [backend/app/api/routes/feedback.py](../../backend/app/api/routes/feedback.py) | 待实现占位 | 23 / 32 / 42 / ARCH-02 | POST /api/feedback，校验会话和回答归属 |
 | [backend/app/core/settings.py](../../backend/app/core/settings.py) | 现有实现 | 02 / 41 / 42 / ARCH-02 | 环境变量配置与 get_settings 缓存 |
-| [backend/app/core/errors.py](../../backend/app/core/errors.py) | 待实现占位 | 02 / 41 / 42 / ARCH-02 | 业务/依赖错误类型，不依赖 HTTP 或厂商 SDK |
+| [backend/app/core/errors.py](../../backend/app/core/errors.py) | 现有实现 | 02 / 41 / 42 / ARCH-02 | 依赖超时错误类型，不依赖 HTTP 或厂商 SDK |
 | [backend/app/core/logging.py](../../backend/app/core/logging.py) | 待实现占位 | 02 / 41 / 42 / ARCH-02 | 结构化白名单日志，排除问题全文、凭据和反馈备注 |
 | [backend/app/infrastructure/database.py](../../backend/app/infrastructure/database.py) | 现有实现 | 10 / 20 / 22 / 42 / ARCH-02 | 惰性 SQL 引擎与 Session 工厂 |
 | [backend/app/infrastructure/orm.py](../../backend/app/infrastructure/orm.py) | 现有实现 | 10 / 20 / 22 / 42 / ARCH-02 | 唯一 DeclarativeBase；模型在 Alembic 装配入口显式注册 |
@@ -65,7 +65,7 @@
 | [backend/app/infrastructure/llm.py](../../backend/app/infrastructure/llm.py) | 待实现占位 | 10 / 20 / 22 / 42 / ARCH-02 | 实现 answering.ports 的模型接口，封装供应商 SDK |
 | [backend/app/cli/reindex.py](../../backend/app/cli/reindex.py) | 现有实现 | 20 | 全量/单文档重建与索引任务处理 |
 | [backend/app/cli/ask.py](../../backend/app/cli/ask.py) | 待实现占位 | 22 | 命令行运行科普问答 |
-| [backend/app/cli/evaluate_retrieval.py](../../backend/app/cli/evaluate_retrieval.py) | 待实现占位 | 21 | 生成开发集检索基线 |
+| [backend/app/cli/evaluate_retrieval.py](../../backend/app/cli/evaluate_retrieval.py) | 现有实现 | 21 | 生成固定题集检索基线 |
 | [backend/app/cli/evaluate_answers.py](../../backend/app/cli/evaluate_answers.py) | 待实现占位 | 40 | 运行固定配置下的独立评测 |
 | [backend/app/cli/backup.py](../../backend/app/cli/backup.py) | 待实现占位 | 42 | 导出 MySQL 与原始资料、版本清单、SHA-256；不打包密钥 |
 | [backend/app/cli/restore.py](../../backend/app/cli/restore.py) | 待实现占位 | 42 | 校验备份并恢复到显式指定的空测试库，拒绝默认覆盖现有库 |

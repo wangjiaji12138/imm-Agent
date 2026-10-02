@@ -35,7 +35,7 @@ docker compose run --rm backend python -m app.cli.reindex --document <document-i
 
 ### 21｜实现统一检索接口
 
-- [ ] 实现 `search_knowledge(query, filters, limit)`。
+- [x] 实现 `search_knowledge(query, filters, limit)`。
 
 输入要求：`query` 长度 2～500，`limit` 范围 1～20，首版过滤器只支持语言、文档 ID 和发布日期范围。输出每项包含 `chunk_id`、`text`、`title`、`organization`、`source_url`、`published_at`、`score`。
 
@@ -46,6 +46,8 @@ docker compose run --rm backend python -m app.cli.reindex --document <document-i
 交给编程助手：
 
 > 完成 TODO 任务 21。按卡片定义 search_knowledge 的输入、输出和过滤器；检索后回查 MySQL 的发布状态与版本。增加超时处理和测试，并提供运行 evals/questions.jsonl 的检索评测命令，输出指定基线文件。
+
+验收记录（2026-10-02）：实现查询校验、Qdrant 候选分页、MySQL 当前发布状态/最新版本与过滤条件核验；Embedding/Qdrant 超时返回依赖错误。运行 `python -m app.cli.evaluate_retrieval --questions ../evals/questions.jsonl --output ../artifacts/retrieval-baseline.json` 生成 20 题基线，17 道有预期来源的题平均 Recall@5 为 1.0；3 道无预期来源题的 Recall@5 为 null。每题记录 Top 5 和耗时。后端本地测试 62 passed、2 skipped，跳过的是真实 MySQL/Qdrant 集成检查；基线命令实际连接了已运行的 MySQL、Qdrant 与 Embedding 服务。
 
 <a id="task-22"></a>
 

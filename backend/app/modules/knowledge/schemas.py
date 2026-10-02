@@ -73,3 +73,13 @@ class ChunkSnapshot(Snapshot):
     text: str
     char_start: int
     char_end: int
+
+
+class VerifiedEvidence(Snapshot):
+    chunk_id: str
+    document_id: str
+    text: str
+    title: str
+    organization: str
+    source_url: str
+    published_at: date | None
