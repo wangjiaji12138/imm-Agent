@@ -167,7 +167,7 @@
     },
     {
       "path": "backend/app/modules/retrieval/ports.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "20",
         "21"
@@ -176,7 +176,7 @@
     },
     {
       "path": "backend/app/modules/retrieval/chunking.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "20",
         "21"
@@ -185,7 +185,7 @@
     },
     {
       "path": "backend/app/modules/retrieval/indexing.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "20",
         "21"
@@ -563,7 +563,7 @@
     },
     {
       "path": "backend/app/infrastructure/embedding.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "10",
         "20",
@@ -575,7 +575,7 @@
     },
     {
       "path": "backend/app/infrastructure/vector_store.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "10",
         "20",
@@ -599,7 +599,7 @@
     },
     {
       "path": "backend/app/cli/reindex.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "20"
       ],

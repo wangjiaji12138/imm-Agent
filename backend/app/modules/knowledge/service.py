@@ -6,11 +6,14 @@ return detached DTOs, never mapped objects or sessions.
 
 from datetime import timezone
 from pathlib import Path
+from uuid import uuid5, NAMESPACE_URL
+from dataclasses import dataclass
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.modules.knowledge import repository
-from app.modules.knowledge.models import Document, DocumentVersion
-from app.modules.knowledge.schemas import DocumentSummary, ImportRecord, VersionSnapshot
+from app.modules.knowledge.models import Chunk, Document, DocumentVersion, IndexJob
+from app.modules.knowledge.schemas import ChunkSnapshot, DocumentSummary, ImportRecord, VersionSnapshot
 from app.modules.knowledge.text import canonical_url, clean_text, content_hash, document_id
 
 
@@ -105,3 +108,53 @@ def source_readiness_error(session: Session, source_id: str) -> str | None:
     if version is None or not version.text.strip() or content_hash(version.text) != version.content_hash:
         return f'{source_id}: 正文缺失或哈希无效'
     return None
+
+
+@dataclass(frozen=True)
+class IndexSnapshot:
+    document: DocumentSummary
+    version: VersionSnapshot | None
+    chunks: list[ChunkSnapshot]
+
+
+def prepare_index(session: Session, source_id: str, splitter) -> IndexSnapshot:
+    """Lock one source and persist deterministic SQL chunks before vector writes."""
+    doc = repository.lock_document(session, source_id)
+    if doc is None:
+        raise ValueError("资料不存在")
+    version = repository.latest_version(session, source_id)
+    if doc.status != "published" or version is None:
+        return IndexSnapshot(DocumentSummary.model_validate(doc), None, [])
+    spans = splitter(version.text)
+    existing = list(session.scalars(select(Chunk).where(Chunk.version_id == version.id).order_by(Chunk.sequence)))
+    expected = [(str(uuid5(NAMESPACE_URL, f"{version.id}:{span.sequence}")), span) for span in spans]
+    if [(row.id, row.title_path, row.text, row.char_start, row.char_end) for row in existing] != [
+        (chunk_id, span.title_path, span.text, span.char_start, span.char_end) for chunk_id, span in expected
+    ]:
+        session.execute(delete(Chunk).where(Chunk.version_id == version.id))
+        session.add_all(Chunk(id=chunk_id, version_id=version.id, sequence=span.sequence,
+                              title_path=span.title_path, text=span.text,
+                              char_start=span.char_start, char_end=span.char_end) for chunk_id, span in expected)
+        session.flush()
+        existing = list(session.scalars(select(Chunk).where(Chunk.version_id == version.id).order_by(Chunk.sequence)))
+    return IndexSnapshot(DocumentSummary.model_validate(doc), VersionSnapshot.model_validate(version),
+                         [ChunkSnapshot.model_validate(row) for row in existing])
+
+
+def finish_index_jobs(session: Session, source_id: str) -> None:
+    """The current SQL state supersedes older queued actions for this source."""
+    jobs = session.scalars(select(IndexJob).where(IndexJob.document_id == source_id,
+                                                  IndexJob.status.in_(("pending", "failed", "running"))))
+    for job in jobs:
+        job.status = "succeeded"
+        job.attempts += 1
+        job.error = None
+
+
+def fail_index_jobs(session: Session, source_id: str, error: str) -> None:
+    jobs = session.scalars(select(IndexJob).where(IndexJob.document_id == source_id,
+                                                  IndexJob.status.in_(("pending", "failed", "running"))))
+    for job in jobs:
+        job.status = "failed"
+        job.attempts += 1
+        job.error = error[:1000]

@@ -1,5 +1,21 @@
-"""PLANNED: Embedding 与 VectorStore 的最小接口，按任务 20 定义。
+"""Minimal external interfaces used by offline indexing."""
 
-任务：20, 21。职责与验收入口见同目录 TODO.md。
-本文件仅占位；尚未实现，不提供假返回值或网络/数据库副作用。
-"""
+from typing import Protocol
+
+
+class Embedding(Protocol):
+    @property
+    def dimension(self) -> int: ...
+
+    @property
+    def model_name(self) -> str: ...
+
+    def encode(self, texts: list[str]) -> list[list[float]]: ...
+
+
+class VectorStore(Protocol):
+    def ensure_collection(self, dimension: int, model_name: str) -> None: ...
+
+    def delete_document(self, document_id: str) -> None: ...
+
+    def upsert(self, points: list[dict]) -> None: ...

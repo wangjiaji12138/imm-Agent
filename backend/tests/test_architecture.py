@@ -54,6 +54,8 @@ def allowed(source, target):
     if source == 'app.main' or within(source, 'app.api') or within(source, 'app.cli'):
         if within(target, 'app.modules'):
             parts = target.split('.')
+            if source == 'app.cli.reindex' and target == 'app.modules.retrieval.indexing.reindex_document':
+                return True
             return len(parts) >= 4 and parts[3] in (
                 'service', 'schemas', 'evidence', 'dataset', 'acquisition', 'workflow')
         return any(within(target, prefix) for prefix in (

@@ -10,14 +10,14 @@
 
 依赖 knowledge 的公开证据服务及本模块定义的 Embedding/VectorStore 接口；不直接调用供应商 SDK，不生成答案。
 
-## 计划文件（当前均为占位）
+## 文件职责
 
 | 文件 | 职责 |
 | --- | --- |
 | [schemas.py](schemas.py) | 检索输入、过滤器、候选和已核验 Evidence DTO |
-| [ports.py](ports.py) | Embedding 与 VectorStore 的最小接口，按任务 20 定义 |
-| [chunking.py](chunking.py) | 按标题/段落/句子切分并保留 Unicode 字符区间 |
-| [indexing.py](indexing.py) | 全量/单文档索引与删除任务处理、幂等和过时任务丢弃 |
+| [ports.py](ports.py) | 已实现 Embedding 与 VectorStore 的最小接口 |
+| [chunking.py](chunking.py) | 已实现按标题/段落/句子切分并保留 Unicode 字符区间 |
+| [indexing.py](indexing.py) | 已实现全量/单文档重建、幂等和按当前 SQL 状态清理旧向量 |
 | [service.py](service.py) | search_knowledge；候选召回后必须通过 knowledge 证据核验 |
 
 ## 实现顺序

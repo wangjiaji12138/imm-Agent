@@ -21,9 +21,9 @@
 | [backend/app/modules/knowledge/evidence.py](../../backend/app/modules/knowledge/evidence.py) | 现有实现 | 10 / 11 / 12 / ARCH-02 | 候选当前 published 状态与最新版本核验，返回只读片段；来源 HTTP 详情待任务 23 |
 | [backend/app/modules/knowledge/acquisition.py](../../backend/app/modules/knowledge/acquisition.py) | 现有实现 | 10 / 11 / 12 / ARCH-02 | NCI 白名单抓取、robots 核验和正文提取，供 CLI 调用 |
 | [backend/app/modules/retrieval/schemas.py](../../backend/app/modules/retrieval/schemas.py) | 待实现占位 | 20 / 21 | 检索输入、过滤器、候选和已核验 Evidence DTO |
-| [backend/app/modules/retrieval/ports.py](../../backend/app/modules/retrieval/ports.py) | 待实现占位 | 20 / 21 | Embedding 与 VectorStore 的最小接口，按任务 20 定义 |
-| [backend/app/modules/retrieval/chunking.py](../../backend/app/modules/retrieval/chunking.py) | 待实现占位 | 20 / 21 | 按标题/段落/句子切分并保留 Unicode 字符区间 |
-| [backend/app/modules/retrieval/indexing.py](../../backend/app/modules/retrieval/indexing.py) | 待实现占位 | 20 / 21 | 全量/单文档索引与删除任务处理、幂等和过时任务丢弃 |
+| [backend/app/modules/retrieval/ports.py](../../backend/app/modules/retrieval/ports.py) | 现有实现 | 20 / 21 | Embedding 与 VectorStore 的最小接口，按任务 20 定义 |
+| [backend/app/modules/retrieval/chunking.py](../../backend/app/modules/retrieval/chunking.py) | 现有实现 | 20 / 21 | 按标题/段落/句子切分并保留 Unicode 字符区间 |
+| [backend/app/modules/retrieval/indexing.py](../../backend/app/modules/retrieval/indexing.py) | 现有实现 | 20 / 21 | 全量/单文档索引与删除任务处理、幂等和过时任务丢弃 |
 | [backend/app/modules/retrieval/service.py](../../backend/app/modules/retrieval/service.py) | 待实现占位 | 20 / 21 | search_knowledge；候选召回后必须通过 knowledge 证据核验 |
 | [backend/app/modules/answering/schemas.py](../../backend/app/modules/answering/schemas.py) | 待实现占位 | 22 | 六类 result_type 与 evidence_status 的响应约束 |
 | [backend/app/modules/answering/ports.py](../../backend/app/modules/answering/ports.py) | 待实现占位 | 22 | 模型 Provider 输入输出及超时错误接口 |
@@ -60,10 +60,10 @@
 | [backend/app/infrastructure/database.py](../../backend/app/infrastructure/database.py) | 现有实现 | 10 / 20 / 22 / 42 / ARCH-02 | 惰性 SQL 引擎与 Session 工厂 |
 | [backend/app/infrastructure/orm.py](../../backend/app/infrastructure/orm.py) | 现有实现 | 10 / 20 / 22 / 42 / ARCH-02 | 唯一 DeclarativeBase；模型在 Alembic 装配入口显式注册 |
 | [backend/app/infrastructure/readiness.py](../../backend/app/infrastructure/readiness.py) | 现有实现 | 10 / 20 / 22 / 42 / ARCH-02 | MySQL 与 Qdrant 连通性检查 |
-| [backend/app/infrastructure/embedding.py](../../backend/app/infrastructure/embedding.py) | 待实现占位 | 10 / 20 / 22 / 42 / ARCH-02 | 实现 retrieval.ports 的 embedding 接口 |
-| [backend/app/infrastructure/vector_store.py](../../backend/app/infrastructure/vector_store.py) | 待实现占位 | 10 / 20 / 22 / 42 / ARCH-02 | 实现 retrieval.ports 的 Qdrant 接口 |
+| [backend/app/infrastructure/embedding.py](../../backend/app/infrastructure/embedding.py) | 现有实现 | 10 / 20 / 22 / 42 / ARCH-02 | 实现 retrieval.ports 的 embedding 接口 |
+| [backend/app/infrastructure/vector_store.py](../../backend/app/infrastructure/vector_store.py) | 现有实现 | 10 / 20 / 22 / 42 / ARCH-02 | 实现 retrieval.ports 的 Qdrant 接口 |
 | [backend/app/infrastructure/llm.py](../../backend/app/infrastructure/llm.py) | 待实现占位 | 10 / 20 / 22 / 42 / ARCH-02 | 实现 answering.ports 的模型接口，封装供应商 SDK |
-| [backend/app/cli/reindex.py](../../backend/app/cli/reindex.py) | 待实现占位 | 20 | 全量/单文档重建与索引任务处理 |
+| [backend/app/cli/reindex.py](../../backend/app/cli/reindex.py) | 现有实现 | 20 | 全量/单文档重建与索引任务处理 |
 | [backend/app/cli/ask.py](../../backend/app/cli/ask.py) | 待实现占位 | 22 | 命令行运行科普问答 |
 | [backend/app/cli/evaluate_retrieval.py](../../backend/app/cli/evaluate_retrieval.py) | 待实现占位 | 21 | 生成开发集检索基线 |
 | [backend/app/cli/evaluate_answers.py](../../backend/app/cli/evaluate_answers.py) | 待实现占位 | 40 | 运行固定配置下的独立评测 |

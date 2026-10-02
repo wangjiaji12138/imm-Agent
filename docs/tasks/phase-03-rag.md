@@ -10,7 +10,7 @@
 
 ### 20｜切分并建立 Qdrant 索引
 
-- [ ] 将已发布文档切分、向量化并写入 Qdrant。
+- [x] 将已发布文档切分、向量化并写入 Qdrant。
 
 首版切分规则要固定在配置中：按标题和段落切分，过长段落再按句子切分；片段保留 `chunk_id`、`document_id`、`version_id`、标题路径、字符位置和文档状态。Embedding 通过接口封装，测试使用确定性的假模型。
 
@@ -26,6 +26,10 @@ docker compose run --rm backend python -m app.cli.reindex --document <document-i
 交给编程助手：
 
 > 完成 TODO 任务 20。实现可测试的切分器、Embedding 接口、Qdrant 写入和全量/单文档重建命令。点 ID 必须稳定，payload 包含任务要求的追溯字段。生产模型通过环境变量配置，测试不得调用外部 API。
+
+进度记录：文件=`backend/app/modules/retrieval/`、`backend/app/infrastructure/embedding.py`、`backend/app/infrastructure/vector_store.py`、`backend/app/cli/reindex.py`、`backend/app/modules/knowledge/service.py`；验证=确定性假模型覆盖 Unicode 位置、重复索引、版本替换和撤回；容器内后端测试含真实 MySQL 检查通过，独立临时集合上的真实 Qdrant 写入、重复写入和删除测试通过；待验收=配置真实 Embedding 服务，对已发布 NCI 资料执行全量重建并核对点数、重复重建和原文位置。在此之前任务保持未完成。任务 21 的在线检索尚未实现。
+
+最终验收（2026-10-02，北京时间 20:49）：已配置百炼北京地域 `text-embedding-v4`，1024 维、每批 10 条。真实执行 `python -m app.cli.reindex --all` 两次，5 篇已发布 NCI 文档均成功，共 180 个向量点。两次点 ID 与 payload 摘要完全一致，未产生重复点；所有片段的原文字符区间、最新版本和 SQL 发布状态核验通过，无多余旧点。容器内全套测试启用 MySQL/Qdrant 集成检查，结果为 58 passed，保留 1 条上游 TestClient 弃用警告。核验记录保存在本地 `artifacts/task20/first.json`、`artifacts/task20/repeated.json`；不包含密钥或正文。版本替换、撤回过滤及失败重试由自动测试覆盖，未撤回现有 NCI 业务资料。任务 21 的统一检索与质量基线仍待开发。
 
 <a id="task-21"></a>
 
@@ -86,4 +90,3 @@ docker compose run --rm backend python -m app.cli.reindex --document <document-i
 交给编程助手：
 
 > 完成 TODO 任务 23。实现两个 API、请求/响应模型、统一错误结构和 request ID。连接现有检索与回答服务。写接口测试，证明回答引用能通过 sources 接口解析。暂不实现登录、流式输出和反馈。
-

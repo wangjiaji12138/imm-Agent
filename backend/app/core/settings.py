@@ -25,6 +25,12 @@ class Settings(BaseSettings):
     mysql_user: str = "imm_agent"
     mysql_password: str = ""
     qdrant_url: str = "http://127.0.0.1:6333"
+    qdrant_collection: str = "imm_agent_chunks_v1"
+    embedding_url: str = ""
+    embedding_model: str = ""
+    embedding_api_key: str = ""
+    embedding_dimension: int = Field(default=1536, ge=1)
+    embedding_batch_size: int = Field(default=10, ge=1, le=100)
 
 
 @lru_cache

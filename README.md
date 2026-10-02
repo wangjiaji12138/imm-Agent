@@ -10,7 +10,11 @@
 
 第二阶段已实现资料库、导入、发布/撤回和 20 题评测集。操作步骤见 [第二阶段知识库工作流](docs/stage-two-workflow.md)，首批 NCI 资料及 ACS/CRI 补充目录见 [来源说明](docs/knowledge-sources.md)。
 
-> 下文保留完整项目规划；实际完成范围以 TODO 勾选及验收记录为准。问答检索与生成属于第三阶段，当前页面发送仍禁用。项目定位为知识科普，不提供个体化诊断、用药或治疗方案。
+第三阶段任务 20 已实现离线切分与 Qdrant 索引。运行前在本地 `.env` 配置 `IMM_AGENT_EMBEDDING_URL`（兼容 OpenAI embeddings 请求的完整端点）、`IMM_AGENT_EMBEDDING_MODEL`、`IMM_AGENT_EMBEDDING_API_KEY`、`IMM_AGENT_EMBEDDING_DIMENSION`，并为每次更换模型或维度设置新的 `IMM_AGENT_QDRANT_COLLECTION`；之后运行 `docker compose run --rm backend python -m app.cli.reindex --all`，或用 `--document <UUID>` 重建单篇。命令以 MySQL 当前发布状态和最新版本重建，撤回/待审核文档的旧向量会删除。正文片段会发送给所配置的 Embedding 服务；请按资料使用条件选择服务。在线检索接口仍由任务 21 实现。
+
+当前已使用阿里云百炼北京地域的 `text-embedding-v4`，1024 维、每批 10 条，将 5 篇 NCI 资料建立为 180 个向量点，并完成重复重建及原文追溯核验（2026-10-02）。新环境的配置示例见 `.env.example`；按[官方说明](https://help.aliyun.com/zh/model-studio/get-api-key/)创建同地域 API Key，填写本地 `.env` 的 `IMM_AGENT_EMBEDDING_API_KEY`，不要把密钥提交 Git。适配器会显式请求配置的维度并按批次调用；接口需要支持 `dimensions` 和 `encoding_format=float`。模型规格见[官方文档](https://help.aliyun.com/zh/model-studio/text-embedding-v4)。索引构建验收通过，检索效果基线由任务 21 测量。
+
+> 下文保留完整项目规划；实际完成范围以 TODO 勾选及验收记录为准。在线问答检索与生成仍未完成，当前页面发送仍禁用。项目定位为知识科普，不提供个体化诊断、用药或治疗方案。
 
 ## 项目起点
 
