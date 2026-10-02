@@ -1,0 +1,22 @@
+{
+  "01": "docs/tasks/phase-01-foundation.md#task-01",
+  "02": "docs/tasks/phase-01-foundation.md#task-02",
+  "03": "docs/tasks/phase-01-foundation.md#task-03",
+  "04": "docs/tasks/phase-01-foundation.md#task-04",
+  "10": "docs/tasks/phase-02-knowledge.md#task-10",
+  "11": "docs/tasks/phase-02-knowledge.md#task-11",
+  "12": "docs/tasks/phase-02-knowledge.md#task-12",
+  "13": "docs/tasks/phase-02-knowledge.md#task-13",
+  "20": "docs/tasks/phase-03-rag.md#task-20",
+  "21": "docs/tasks/phase-03-rag.md#task-21",
+  "22": "docs/tasks/phase-03-rag.md#task-22",
+  "23": "docs/tasks/phase-03-rag.md#task-23",
+  "30": "docs/tasks/phase-04-conversation.md#task-30",
+  "31": "docs/tasks/phase-04-conversation.md#task-31",
+  "32": "docs/tasks/phase-04-conversation.md#task-32",
+  "40": "docs/tasks/phase-05-release.md#task-40",
+  "41": "docs/tasks/phase-05-release.md#task-41",
+  "42": "docs/tasks/phase-05-release.md#task-42",
+  "ARCH-01": "docs/tasks/architecture.md#task-ARCH-01",
+  "ARCH-02": "docs/tasks/architecture.md#task-ARCH-02"
+}

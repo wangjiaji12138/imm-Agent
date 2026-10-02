@@ -29,6 +29,7 @@ Thumbs.db
 
 # Local source material and database exports
 data/raw/
+data/backups/
 *.sql
 *.sql.gz
 *.dump
@@ -37,4 +38,3 @@ data/raw/
 # Runtime artifacts
 artifacts/
 logs/
-
