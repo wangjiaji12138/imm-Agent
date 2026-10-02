@@ -4,12 +4,10 @@ import argparse
 import json
 from uuid import UUID
 
-from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.database import get_session
-from app.knowledge import TRANSITIONS, change_status, latest_version
-from app.models import Document
+from app.infrastructure.database import get_session
+from app.modules.knowledge.service import TRANSITIONS, change_status, get_document, latest_version, list_documents
 
 
 def main() -> int:
@@ -22,9 +20,9 @@ def main() -> int:
     try:
         with get_session() as session, session.begin():
             if args.action == "list":
-                docs = session.scalars(select(Document).order_by(Document.source_url))
+                docs = list_documents(session)
             elif args.action == "show":
-                doc = session.get(Document, str(args.document_id))
+                doc = get_document(session, str(args.document_id))
                 if doc is None:
                     raise ValueError("资料不存在")
                 docs = [doc]

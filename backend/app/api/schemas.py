@@ -1,5 +1,18 @@
-"""PLANNED: HTTP 请求/响应与业务 DTO 的边界映射。
+"""Stable process health and dependency readiness response contracts."""
 
-任务：23, 32, 42, ARCH-02；验收与边界见本模块 TODO.md。
-仅占位，未注册路由、建立连接或提供假实现。
-"""
+from typing import Literal
+from pydantic import BaseModel
+
+
+class HealthResponse(BaseModel):
+    """Stable response contract for process health checks."""
+
+    status: Literal["ok"] = "ok"
+    service: Literal["imm-agent"] = "imm-agent"
+
+
+class ReadinessResponse(BaseModel):
+    """Availability of services required to answer requests."""
+
+    status: Literal["ready", "not_ready"]
+    checks: dict[str, Literal["ok", "unavailable"]]

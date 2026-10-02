@@ -6,8 +6,8 @@ from pathlib import Path
 
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.database import get_session
-from app.evaluation import validate_evaluations
+from app.infrastructure.database import get_session
+from app.modules.evaluation.dataset import validate_evaluations
 
 
 def main() -> int:

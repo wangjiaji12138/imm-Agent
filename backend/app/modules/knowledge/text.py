@@ -1,5 +1,28 @@
-"""PLANNED: 清洗、SHA-256、URL 规范化和稳定文档 ID 纯函数。
+"""Stable text normalization, content hashes and source identifiers."""
 
-任务：10, 11, 12, ARCH-02。职责与验收入口见同目录 TODO.md。
-本文件仅占位；尚未实现，不提供假返回值或网络/数据库副作用。
-"""
+import hashlib
+import re
+from uuid import NAMESPACE_URL, uuid5
+
+from pydantic import HttpUrl
+
+### 文本清洗+哈希
+def clean_text(text: str) -> str:
+    """Preserve paragraph/title boundaries and Unicode character offsets."""
+    lines = [re.sub(r"[^\S\n]+", " ", line).strip() for line in text.replace("\r\n", "\n").replace("\r", "\n").split("\n")]
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+
+
+def content_hash(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def canonical_url(url: str | HttpUrl) -> str:
+    parsed = HttpUrl(url)
+    if parsed.username or parsed.password:
+        raise ValueError("source_url cannot contain credentials")
+    return str(parsed).split("#", 1)[0]
+
+
+def document_id(url: str | HttpUrl) -> str:
+    return str(uuid5(NAMESPACE_URL, canonical_url(url)))

@@ -1,8 +1,9 @@
 from alembic import context
 from sqlalchemy import create_engine, pool
 
-from app.database import database_url
-from app.models import Base
+from app.infrastructure.database import database_url
+from app.infrastructure.orm import Base
+from app.modules.knowledge import models  # Register the six knowledge tables.
 
 config = context.config
 target_metadata = Base.metadata

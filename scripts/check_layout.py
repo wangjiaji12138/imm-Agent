@@ -1,7 +1,7 @@
 """Read-only validation of architecture paths, task coverage and local Markdown links.
 
 Run from any working directory. Standard library only. This checks the design
-inventory; actual import boundaries belong to the ARCH-02 implementation.
+inventory; backend/tests/test_architecture.py checks actual import boundaries.
 """
 
 import ast

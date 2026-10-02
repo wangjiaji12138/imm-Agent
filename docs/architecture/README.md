@@ -2,7 +2,7 @@
 
 本项目采用模块化单体：一个 FastAPI 应用、一个 React 前端、独立运行的离线 CLI，MySQL 保存权威数据，Qdrant 保存可重建索引。按业务能力组织代码，先用明确接口隔离变化，不提前拆成微服务。
 
-**当前运行状态：** 第一、二阶段已实现；现有后端逻辑仍在 `app/main.py`、`knowledge.py`、`evaluation.py` 等入口，前端仍由 `App.tsx` 组织。新模块中的 `PLANNED` 文件只是设计占位，不注册路由、不建立连接、不返回模拟成功。目录齐全不代表 RAG、会话或反馈已经实现。
+**当前运行状态：** 第一、二阶段后端已迁入 `core`、`infrastructure`、`modules/knowledge`、`modules/evaluation` 与健康 API；`main.py` 只装配应用。旧 Python 模块已删除，内部调用和测试均使用新路径。前端仍由 `App.tsx` 组织；标注 `PLANNED` 的 RAG、会话、反馈等文件仍是未实现占位。
 
 ## 阅读顺序
 
@@ -27,19 +27,18 @@ imm-Agent/
 ├── .github/workflows/            CI 示例占位，未启用
 ├── backend/
 │   ├── app/
-│   │   ├── main.py               现有 FastAPI 入口；未来仅装配依赖与路由
-│   │   ├── knowledge.py ...      现有逻辑；按 ARCH-02 逐步迁入 modules
-│   │   ├── api/                  占位：HTTP 路由、请求校验、依赖与错误
-│   │   ├── core/                 占位：配置、共用错误、安全日志
-│   │   ├── infrastructure/       占位：SQL、Qdrant、Embedding、模型适配
+│   │   ├── main.py               FastAPI 装配入口
+│   │   ├── api/                  现有健康路由/schema/依赖；问答等占位
+│   │   ├── core/                 现有配置；共用错误、安全日志占位
+│   │   ├── infrastructure/       现有 SQL/Base/连通性；模型与向量适配占位
 │   │   ├── modules/
-│   │   │   ├── knowledge/        占位：资料采集、版本、发布、证据核验
+│   │   │   ├── knowledge/        现有资料采集、版本、发布、SQL 证据核验
 │   │   │   ├── retrieval/        占位：切分、索引、检索
 │   │   │   ├── answering/        占位：生成、引用校验、版本化 prompts
 │   │   │   ├── agent/            占位：分类、安全分流、显式工作流
 │   │   │   ├── conversations/    占位：会话身份、消息与必要上下文
 │   │   │   ├── feedback/         占位：回答反馈与归属校验
-│   │   │   └── evaluation/       占位：题集、指标、基线和版本报告
+│   │   │   └── evaluation/       现有题集校验；指标、基线和报告占位
 │   │   └── cli/                 现有导入/发布 CLI；索引/评测/备份占位
 │   ├── migrations/              现有表结构历史，目录移动不改旧迁移
 │   └── tests/                   现有测试；modules/integration 新增计划

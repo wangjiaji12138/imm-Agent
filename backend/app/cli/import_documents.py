@@ -8,8 +8,9 @@ from pydantic import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.database import get_session
-from app.knowledge import ImportRecord, import_record
+from app.infrastructure.database import get_session
+from app.modules.knowledge.schemas import ImportRecord
+from app.modules.knowledge.service import import_record
 
 
 def import_manifest(session: Session, manifest: Path, base_dir: Path | None = None) -> dict[str, int]:

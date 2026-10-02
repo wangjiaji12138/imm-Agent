@@ -2,7 +2,7 @@
 
 [根任务导航](../TODO.md) · [架构与边界](../docs/architecture/README.md)
 
-当前 app/main.py、knowledge.py、evaluation.py 等为已运行实现。新 api/core/infrastructure/modules 目录只有占位；先按 [ARCH-02](../docs/tasks/architecture.md#task-ARCH-02) 逐步迁入，不能直接删除旧入口。
+第一、二阶段逻辑已按 [ARCH-02](../docs/tasks/architecture.md#task-ARCH-02) 迁入 api/core/infrastructure/modules。main.py 仅负责装配；旧平铺 Python 模块按用户要求删除。后续功能仍以 PLANNED 标识占位。
 
 | 分区 | 模块 TODO |
 | --- | --- |

@@ -4,7 +4,7 @@
 
 具体开发顺序、待办任务与阶段验收条件见 [开发任务清单](TODO.md)；从新电脑安装环境到日常开发的完整操作见 [跨平台开发工作流](docs/development-workflow.md)。
 
-整体目录、功能边界和现有代码迁移路线见 [架构导航](docs/architecture/README.md)。根 TODO 按阶段导航，各模块旁的 TODO 说明文件职责；未实现文件均有明确占位标记。
+整体目录、功能边界和代码迁移记录见 [架构导航](docs/architecture/README.md)。根 TODO 按阶段导航，各模块旁的 TODO 说明文件职责；第一、二阶段后端已迁入模块，旧 Python 入口已删除；未实现文件均有明确占位标记。
 
 各项技术是什么、为什么选择以及在项目里怎么用，连同术语表和学习路径，见 [技术栈入门导读](docs/technical-summary.md)。
 

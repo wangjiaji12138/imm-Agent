@@ -1,5 +1,34 @@
-"""PLANNED: 现有配置类迁入，保留环境变量名和缓存行为。
+"""Environment-based application configuration."""
 
-任务：02, 41, 42, ARCH-02；验收与边界见本模块 TODO.md。
-仅占位，未注册路由、建立连接或提供假实现。
-"""
+from functools import lru_cache
+from typing import Literal
+
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    """Runtime settings loaded from ``IMM_AGENT_*`` environment variables."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="IMM_AGENT_",
+        env_file=("../.env", ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    environment: Literal["development", "test", "production"] = "development"
+    log_level: str = Field(default="INFO", min_length=1)
+    mysql_host: str = "127.0.0.1"
+    mysql_port: int = Field(default=3306, ge=1, le=65535)
+    mysql_database: str = "imm_agent"
+    mysql_user: str = "imm_agent"
+    mysql_password: str = ""
+    qdrant_url: str = "http://127.0.0.1:6333"
+
+
+@lru_cache
+def get_settings() -> Settings:
+    """Return one validated settings instance per process."""
+
+    return Settings()

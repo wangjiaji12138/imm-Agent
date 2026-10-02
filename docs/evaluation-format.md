@@ -16,7 +16,7 @@
 
 `expected_source_ids` 是文档 ID，不是 chunk ID；第三阶段再映射检索结果。证据不足题可以列相关资料，但相关资料不能被当作足以回答原问题的证据。拒答和指代不清的澄清题可为空，因为这些分支在检索前处理。
 
-Pydantic 模型位于 `backend/app/evaluation.py`，禁止未知字段，检查题型和预期行为的一致性。`TODO_MISSING_SOURCE` 出现在任一行时，命令返回未就绪；引用不存在、未发布、缺少正文或哈希不符也未就绪。数据库连接失败不能当作验证成功。
+Pydantic 模型位于 `backend/app/modules/evaluation/schemas.py`，禁止未知字段，检查题型和预期行为的一致性。`TODO_MISSING_SOURCE` 出现在任一行时，命令返回未就绪；引用不存在、未发布、缺少正文或哈希不符也未就绪。数据库连接失败不能当作验证成功。
 
 ```text
 docker compose run --rm backend python -m app.cli.validate_evals

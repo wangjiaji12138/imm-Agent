@@ -4,7 +4,7 @@ CLI 负责参数、依赖装配、逐行结果和退出码；业务规则放到�
 
 | 命令文件 | 状态 | 任务与依赖 |
 | --- | --- | --- |
-| fetch_sources.py / import_documents.py | 已实现 | [11](../../../docs/tasks/phase-02-knowledge.md#task-11)；采集/清洗/导入逻辑按 ARCH-02 下沉 knowledge |
+| fetch_sources.py / import_documents.py | 已实现 | [11](../../../docs/tasks/phase-02-knowledge.md#task-11)；采集/清洗/导入逻辑位于 modules/knowledge |
 | documents.py | 已实现 | [12](../../../docs/tasks/phase-02-knowledge.md#task-12)；发布、撤回、过期 |
 | validate_evals.py | 已实现 | [13](../../../docs/tasks/phase-02-knowledge.md#task-13)；题集格式与来源就绪 |
 | reindex.py | 占位，执行会失败 | [20](../../../docs/tasks/phase-03-rag.md#task-20)；全量/单文档重建及删除任务处理 |

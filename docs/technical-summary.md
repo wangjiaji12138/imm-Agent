@@ -60,7 +60,7 @@ flowchart LR
 
 - **是什么**：Pydantic 按声明的类型校验数据；pydantic-settings 用相同方式读取和校验配置。
 - **为什么**：接口输出和数据库连接参数需要明确格式，错误配置应尽早被发现。
-- **在本项目里怎么用**：代码中，`HealthResponse`、`ReadinessResponse` 定义响应结构；[settings.py](../backend/app/settings.py) 读取 `IMM_AGENT_*` 环境变量，例如限制数据库端口的取值范围。结构正确并不等于内容事实正确。
+- **在本项目里怎么用**：代码中，`HealthResponse`、`ReadinessResponse` 定义响应结构；[settings.py](../backend/app/core/settings.py) 读取 `IMM_AGENT_*` 环境变量，例如限制数据库端口的取值范围。结构正确并不等于内容事实正确。
 
 ### MySQL 与 Qdrant
 
@@ -72,7 +72,7 @@ flowchart LR
 
 - **是什么**：PyMySQL 是 Python 连接 MySQL 的驱动；HTTPX 是发送 HTTP 请求的客户端库。
 - **为什么**：后端需要分别通过数据库协议和 HTTP 检查两个依赖服务。
-- **在本项目里怎么用**：代码中，[readiness.py](../backend/app/readiness.py) 用 PyMySQL 建立短连接，用 HTTPX 请求 Qdrant 的 `/readyz`，将结果交给 `/ready` 接口。
+- **在本项目里怎么用**：代码中，[readiness.py](../backend/app/infrastructure/readiness.py) 用 PyMySQL 建立短连接，用 HTTPX 请求 Qdrant 的 `/readyz`，将结果交给 `/ready` 接口。
 
 ### SQLAlchemy 与 Alembic（设计中）
 

@@ -5,7 +5,8 @@ from collections.abc import Iterator
 import pytest
 from fastapi.testclient import TestClient
 
-from app.main import app, check_mysql, check_qdrant
+from app.main import app
+from app.api.dependencies import check_mysql, check_qdrant
 
 
 @pytest.fixture(autouse=True)

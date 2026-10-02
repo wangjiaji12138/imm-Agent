@@ -10,11 +10,13 @@
 
 离线调用应用服务；在线服务不得依赖评测模块。以知识服务查询来源状态。
 
-## 计划文件（当前均为占位）
+## 文件职责
+
+schemas.py 与 dataset.py 已实现；检索基线、回答评测、指标和报告仍为占位。
 
 | 文件 | 职责 |
 | --- | --- |
-| [schemas.py](schemas.py) | 现有 EvaluationQuestion、Turn 的迁移目标 |
+| [schemas.py](schemas.py) | EvaluationQuestion 与 Turn 格式校验 |
 | [dataset.py](dataset.py) | 读取 JSONL、验证 ID/分组/已发布来源 |
 | [retrieval.py](retrieval.py) | 开发集检索基线、Top 5、Recall@5 和耗时 |
 | [answers.py](answers.py) | 独立集端到端运行及逐条审查材料 |

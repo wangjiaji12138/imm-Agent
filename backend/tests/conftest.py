@@ -4,8 +4,9 @@ import pytest
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session
 
-from app.knowledge import content_hash
-from app.models import Base, Document, DocumentVersion
+from app.modules.knowledge.text import content_hash
+from app.infrastructure.orm import Base
+from app.modules.knowledge.models import Document, DocumentVersion
 
 
 @pytest.fixture

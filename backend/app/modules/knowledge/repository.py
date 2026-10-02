@@ -1,5 +1,64 @@
-"""PLANNED: 资料、版本、片段和索引任务的 SQL 访问；向外返回 schema，不暴露 ORM。
+"""Knowledge SQL access. Only this module and knowledge services handle ORM rows.
 
-任务：10, 11, 12, ARCH-02。职责与验收入口见同目录 TODO.md。
-本文件仅占位；尚未实现，不提供假返回值或网络/数据库副作用。
+The caller owns the Session and transaction; these functions never commit.
 """
+
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session
+
+from app.modules.knowledge.models import Chunk, Document, DocumentVersion, IndexJob
+
+
+def latest_version(session: Session, source_id: str) -> DocumentVersion | None:
+    return session.scalar(select(DocumentVersion).where(DocumentVersion.document_id == source_id)
+                          .order_by(DocumentVersion.version_number.desc()).limit(1))
+
+
+def get_document(session: Session, source_id: str) -> Document | None:
+    return session.get(Document, source_id, populate_existing=True)
+
+
+def list_documents(session: Session) -> list[Document]:
+    return list(session.scalars(select(Document).order_by(Document.source_url)))
+
+
+def lock_document(session: Session, source_id: str) -> Document | None:
+    return session.scalar(select(Document).where(Document.id == source_id).with_for_update())
+
+
+def lock_source(session: Session, source_key: str) -> Document | None:
+    return session.scalar(select(Document).where(Document.source_key == source_key).with_for_update())
+
+
+def has_version_hash(session: Session, source_id: str, digest: str) -> bool:
+    return session.scalar(select(DocumentVersion.id).where(
+        DocumentVersion.document_id == source_id, DocumentVersion.content_hash == digest)) is not None
+
+
+def add_index_job(session: Session, source_id: str, version_id: str, action: str) -> None:
+    session.add(IndexJob(document_id=source_id, version_id=version_id, action=action))
+
+
+def published_documents(session: Session) -> list[Document]:
+    """Read current SQL state, even if this session previously loaded a document."""
+    return list(session.scalars(select(Document).where(Document.status == "published")
+                               .execution_options(populate_existing=True)))
+
+
+def eligible_chunks(session: Session, candidate_ids: list[str]) -> list[Chunk]:
+    """Future Qdrant adapter must pass candidates through this fail-closed SQL gate.
+
+    Ignore vector payload status; accept only current published versions. Text is
+    read from SQL, never from an untrusted/stale vector payload.
+    """
+    if not candidate_ids:
+        return []
+    latest = select(DocumentVersion.document_id, func.max(DocumentVersion.version_number).label("number")) \
+        .group_by(DocumentVersion.document_id).subquery()
+    statement = select(Chunk).join(DocumentVersion, Chunk.version_id == DocumentVersion.id) \
+        .join(Document, DocumentVersion.document_id == Document.id) \
+        .join(latest, (latest.c.document_id == Document.id) & (latest.c.number == DocumentVersion.version_number)) \
+        .where(Chunk.id.in_(candidate_ids), Document.status == "published") \
+        .execution_options(populate_existing=True)
+    found = {chunk.id: chunk for chunk in session.scalars(statement)}
+    return [found[key] for key in dict.fromkeys(candidate_ids) if key in found]

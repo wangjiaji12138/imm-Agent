@@ -2,9 +2,9 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from app.evaluation import validate_evaluations
-from app.knowledge import content_hash
-from app.models import Document, DocumentVersion
+from app.modules.evaluation.dataset import validate_evaluations
+from app.modules.knowledge.text import content_hash
+from app.modules.knowledge.models import Document, DocumentVersion
 
 ROOT = Path(__file__).resolve().parents[2]
 EVALS = ROOT / 'evals/questions.jsonl'

@@ -1,5 +1,12 @@
-"""PLANNED: 在请求边界装配服务、短事务与会话认证依赖。
+"""Composition of readiness checks; imports never connect to external services."""
 
-任务：23, 32, 42, ARCH-02；验收与边界见本模块 TODO.md。
-仅占位，未注册路由、建立连接或提供假实现。
-"""
+from app.core.settings import get_settings
+from app.infrastructure.readiness import mysql_is_ready, qdrant_is_ready
+
+
+def check_mysql() -> bool:
+    return mysql_is_ready(get_settings())
+
+
+def check_qdrant() -> bool:
+    return qdrant_is_ready(get_settings())

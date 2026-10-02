@@ -11,9 +11,12 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
 
-from app.database import get_engine
-from app.knowledge import change_status, content_hash, eligible_chunks
-from app.models import Base, Chunk, Document, DocumentVersion, IndexJob
+from app.infrastructure.database import get_engine
+from app.modules.knowledge.service import change_status
+from app.modules.knowledge.text import content_hash
+from app.modules.knowledge.evidence import eligible_chunks
+from app.infrastructure.orm import Base
+from app.modules.knowledge.models import Chunk, Document, DocumentVersion, IndexJob
 
 pytestmark = pytest.mark.skipif(os.environ.get('IMM_AGENT_TEST_MYSQL') != '1', reason='requires migrated MySQL')
 

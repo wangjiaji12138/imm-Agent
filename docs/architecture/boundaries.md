@@ -1,6 +1,6 @@
 # 模块依赖与接口边界
 
-本文件是目标约束；目前平铺代码尚未完全满足，见 [迁移任务](../tasks/architecture.md#task-ARCH-02)。不通过新增一批空目录宣称已实现依赖隔离。
+ARCH-02 已将第一、二阶段代码迁入模块，并通过静态 import 检查约束实际依赖。下列规则同时约束后续实现；占位模块不代表功能已完成。
 
 ## 依赖规则
 
@@ -20,7 +20,7 @@
 
 业务 repository 可以使用 SQLAlchemy；服务到 repository 的关系优先采用具体清晰的方法，不强制给每个数据库表增加抽象接口。Embedding、VectorStore 和模型 Provider 是实际可替换边界，应定义最小 Protocol 并注入假实现测试。
 
-后续 ARCH-02 为这些允许关系添加实际 import 依赖检查；当前架构检查只校验文件、任务覆盖和文档链接，不假装已检测所有依赖倒置。
+在容器中运行 `python -m pytest tests/test_architecture.py`：扫描实际应用代码的绝对/相对 import，校验允许依赖、禁止跨模块直读 ORM、星号导入及循环依赖。违规示例验证 Agent 引入 FastAPI、SQLAlchemy 或未知 SDK 会失败。此检查是静态约束，不覆盖动态 import 或任意运行时行为；`scripts/check_layout.py` 另负责文件与文档链接。知识采集可使用 HTTPX/BeautifulSoup；评测仅导入 SQL Session 类型，通过知识服务核验来源。
 
 ## 对外调用契约（待实现部分为设计目标）
 
@@ -39,7 +39,7 @@
 | feedback → conversations | 会话身份 + request_id | 是否属于该会话的回答；不得只校验 ID 存在 | 32 |
 | evaluation → 业务服务 | 固定数据/模型/提示词版本、题集划分 | 逐题结果、指标和不可覆盖的运行报告 | 21/40 |
 
-业务服务公开返回普通 DTO/Pydantic 对象；不要把 ORM 实例、HTTP Response 或 SDK 响应跨模块传递。现有函数仍返回 ORM 的地方由 ARCH-02 或对应功能卡调整，并补兼容测试。
+业务服务公开返回普通 DTO/Pydantic 对象；不要把 ORM 实例、HTTP Response 或 SDK 响应跨模块传递。知识服务和证据入口已返回只读 DTO；repository 内部仍可使用 ORM。旧 Python 模块入口已删除。
 
 ## 数据归属与事务
 

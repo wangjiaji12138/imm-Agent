@@ -12,3 +12,5 @@ docker compose run --rm -e IMM_AGENT_TEST_MYSQL=1 backend python -m pytest
 ```
 
 第二条要求已迁移的 MySQL。普通测试不调用外部模型和真实网站；使用确定性替身验证内容、异常和边界。测试计划文件不包含假测试函数，不增加 passed 数量。
+
+ARCH-02 的实际依赖检查位于 test_architecture.py：扫描应用 import、相对导入与循环依赖，并验证违规示例会失败。modules/knowledge/test_service.py 验证 DTO 脱离 Session 后可读、不可变，以及状态与索引任务一起回滚。原有 34 项测试保留行为断言，统一使用新模块路径。

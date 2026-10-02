@@ -1,8 +1,8 @@
 # 现有实现与目标目录
 
-本次完成设计和占位，不搬动已验证运行代码。[ARCH-02](../tasks/architecture.md#task-ARCH-02) 才执行下面的迁移。未来 RAG 模块尚无旧实现可迁，不应复制当前代码形成两套权威逻辑。
+[ARCH-02](../tasks/architecture.md#task-ARCH-02) 已按下表完成第一、二阶段后端迁移。用户明确要求无需兼容旧接口，因此删除旧 Python 模块，不保留转发层；CLI 参数、输出、退出码和 HTTP 健康契约保持。未来 RAG 模块继续按任务实现。
 
-| 当前实际入口 | 目标位置 | 兼容要求 |
+| 迁移前入口（历史路径） | 当前实现位置 | 行为约束 |
 | --- | --- | --- |
 | backend/app/settings.py | core/settings.py | 环境变量名、get_settings 缓存和健康检查启动条件不变 |
 | backend/app/database.py | infrastructure/database.py | 保持惰性连接；逐步显式管理 Session/Engine 生命周期 |
@@ -16,17 +16,17 @@
 | cli/fetch_sources.py 的抓取函数 | modules/knowledge/acquisition.py | CLI 参数与白名单不变；CLI 仅组装与退出码 |
 | evaluation.py 的 Pydantic 模型 | modules/evaluation/schemas.py | 20 题规则、dev/test 和行为分类不变 |
 | evaluation.py 的校验执行 | modules/evaluation/dataset.py | validate_evals 的输出与退出码不变 |
-| main.py 的健康路由 | api/routes/health.py | /health、/ready 契约和测试依赖覆盖点不变 |
+| main.py 的健康路由 | api/routes/health.py | /health、/ready 契约保持；测试依赖从 api.dependencies 导入 |
 | readiness.py | infrastructure/readiness.py | 超时和不可用行为不变 |
 | frontend/src/App.tsx | features/* + shared/* | 随任务 30—32 提取；当前草稿、健康状态、布局不因占位改变 |
 
 ## 迁移步骤
 
-1. 提取纯函数/schema，保留旧模块的显式 re-export。禁止 `import *` 和双向依赖。
+1. 提取纯函数/schema。按用户要求直接更新调用方，不保留旧模块 re-export；禁止 `import *` 和双向依赖。
 2. 迁移 Base 与 ORM，再移动 repository/service；用 Alembic metadata 对比证明没有表结构漂移。不要通过 downgrade/up 删除现有数据库。
 3. 迁移采集与评测实现，CLI 名称和 manifest 路径语义保持不变。
 4. 迁移健康路由，保留当前 TestClient 的依赖覆盖能力；main 仅装配。
-5. 更新内部 import；旧入口只转发，不包含第二份实现。明确兼容入口移除条件：文档、CLI、测试及外部调用均已迁完。
+5. 更新应用、CLI、迁移装配与测试的 import 后删除六个旧模块。外部 Python 调用方需按本表切换新路径；不提供兼容层。
 6. 在任务 30—32 中逐步提取前端功能，不提前更改页面交互。
 
 ## 验收边界

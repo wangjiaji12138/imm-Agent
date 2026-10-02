@@ -1,5 +1,11 @@
-"""PLANNED: 检索候选的当前 published 状态与最新版本核验，以及来源详情读取。
+"""SQL-authoritative evidence gate with detached chunk results."""
 
-任务：10, 11, 12, ARCH-02。职责与验收入口见同目录 TODO.md。
-本文件仅占位；尚未实现，不提供假返回值或网络/数据库副作用。
-"""
+from sqlalchemy.orm import Session
+
+from app.modules.knowledge import repository
+from app.modules.knowledge.schemas import ChunkSnapshot
+
+
+def eligible_chunks(session: Session, candidate_ids: list[str]) -> list[ChunkSnapshot]:
+    """Keep candidate order; reject unpublished and superseded versions in SQL."""
+    return [ChunkSnapshot.model_validate(chunk) for chunk in repository.eligible_chunks(session, candidate_ids)]

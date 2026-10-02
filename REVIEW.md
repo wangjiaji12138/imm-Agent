@@ -552,3 +552,31 @@
 - 本次完成可导航、可检查的架构设计与文件占位；现有第一、二阶段实现保持原入口，未执行 ARCH-02 的实际搬迁。
 - 模块边界是下一轮实现约束，当前检查工具不宣称已验证真实 import 依赖倒置；相应自动检查属于 ARCH-02。
 - 未实现第三阶段 RAG、会话、反馈或自动备份；没有更改数据库结构和既有业务数据。
+
+---
+
+## 2026-10-02 15:23
+
+### 变更
+- 完成 ARCH-02：配置归入 core；惰性 SQL 连接、唯一 Base 和就绪检查归入 infrastructure；资料清洗、校验、六表 ORM、仓储、事务、SQL 证据核验与 NCI 采集归入 modules/knowledge；题集模型和来源校验归入 modules/evaluation。
+- main.py 只装配 FastAPI；健康路由、响应结构与依赖覆盖点归入 api。CLI 与评测通过知识服务读取资料；公开结果使用只读 DTO，Session/事务仍由调用边界持有。
+- 按用户“不需要兼容旧接口”的要求删除六个旧平铺 Python 模块，统一更新应用、CLI、Alembic 装配与测试导入。保留原工作区中文注释并随实现迁移；历史迁移文件未改动。
+- 新增真实应用 import 边界、相对导入、循环依赖及违规示例检查，新增 DTO 脱离 Session 与状态/索引任务原子回滚测试。同步架构目录清单、模块导航、开发文档和任务卡；下一步指向任务 20。
+
+### 原因
+- 根 TODO 推荐在切分与索引之前完成 ARCH-02，使新业务在明确的模块边界内扩展。
+
+### 验证
+- 迁移前容器回归 34 passed；纯函数/schema 提取后与 ORM/仓储/服务迁移后分别 34 passed。各阶段均启用真实 MySQL；没有对既有库执行 downgrade、清空或重新导入。
+- `docker compose build backend` → 最终镜像构建成功。
+- `docker compose run --rm -e IMM_AGENT_TEST_MYSQL=1 backend python -m pytest` → 最终镜像 48 passed；含原有 34 项行为测试、12 项 import 检查和违规检测、2 项 DTO/回滚测试。真实 MySQL metadata 比较为空，无表结构漂移。
+- 只读脚本按主键排序后计算六表全量行 JSON 的 SHA-256：迁移前后完全一致；documents=5、document_versions=5、index_jobs=5，chunks/terms/term_aliases=0。五篇资料的 ID、内容哈希、状态及版本均保持。
+- 10 组 CLI 快照（四个 --help；documents list、不存在资料 show、缺少参数 publish；validate_evals 正常/缺失文件；import_documents 缺失文件）的 stdout、stderr、退出码完全一致。最终镜像再次核对通过。只读快照脚本及前后结果存于 Git 忽略的 `artifacts/arch02/`。
+- 中途直接执行 /tmp 快照脚本时导入了旧镜像 site-packages 中的占位模块，出现 ImportError；改为明确 `PYTHONPATH=/app` 验证挂载代码，最终镜像验证无需该覆盖，全部通过。
+- `docker compose up -d --no-deps backend` 和 `docker compose ps` → 后端更新成功，四服务 healthy；容器内 urllib 请求实际 /health 返回 ok，/ready 返回 ready，mysql/qdrant 均 ok。
+- `docker compose run --rm --no-deps -v ".:/workspace:ro" -w /workspace backend python scripts/check_layout.py` → 81 个架构条目、20 张任务卡、本地文档链接无错误。
+- 配置、就绪检查、ORM 类及采集函数的迁移前后 AST 对比一致；历史迁移无 diff；`git diff --check` 通过。
+
+### 未处理
+- 1 条既有 Starlette/TestClient 对 httpx 的弃用警告，不影响本次通过结果。
+- 任务 20—23 及后续页面/会话/反馈继续保持未实现；本次未调整前端代码或新增 RAG 功能。

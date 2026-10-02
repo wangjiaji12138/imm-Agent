@@ -1,6 +1,6 @@
 import pytest
 
-from app.cli.fetch_sources import extract_nci
+from app.modules.knowledge.acquisition import extract_nci
 
 
 def test_extraction_excludes_navigation_media_footer_and_keeps_paragraphs():

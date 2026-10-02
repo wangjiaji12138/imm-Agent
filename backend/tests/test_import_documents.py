@@ -6,8 +6,9 @@ from pydantic import ValidationError
 from sqlalchemy import func, select
 
 from app.cli.import_documents import import_manifest
-from app.knowledge import ImportRecord, clean_text, document_id
-from app.models import Document, DocumentVersion
+from app.modules.knowledge.schemas import ImportRecord
+from app.modules.knowledge.text import clean_text, document_id
+from app.modules.knowledge.models import Document, DocumentVersion
 
 
 def record(path='a.txt', url='https://example.org/a'):

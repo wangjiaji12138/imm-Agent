@@ -8,4 +8,4 @@
 | [errors.py](errors.py) | 业务/依赖错误类型，不依赖 HTTP 或厂商 SDK |
 | [logging.py](logging.py) | 结构化白名单日志，排除问题全文、凭据和反馈备注 |
 
-实现顺序与禁止依赖见 [模块边界](../../../docs/architecture/boundaries.md)。所有文件当前只是占位，不能因目录存在就宣称接口或适配器已完成。
+实现顺序与禁止依赖见 [模块边界](../../../docs/architecture/boundaries.md)。settings.py 已实现；errors.py 与 logging.py 仍为占位。

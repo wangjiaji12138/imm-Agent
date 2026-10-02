@@ -244,7 +244,7 @@ curl --fail --silent --show-error http://127.0.0.1:8000/ready
 docker compose run --rm backend python -m pytest
 ```
 
-通过条件：当前第二阶段默认测试输出 `33 passed, 1 skipped`；迁移后增加 `-e IMM_AGENT_TEST_MYSQL=1` 运行全部测试应为 `34 passed`。默认跳过的是真实 MySQL 集成测试。测试临时容器会在结束后由 `--rm` 删除。
+通过条件：ARCH-02 后默认测试输出 `47 passed, 1 skipped`；增加 `-e IMM_AGENT_TEST_MYSQL=1` 运行全部测试应为 `48 passed`。默认跳过的是真实 MySQL 集成测试。测试临时容器会在结束后由 `--rm` 删除。
 
 第二阶段迁移、导入、资料发布和评测题验收见 [知识库工作流](stage-two-workflow.md)。
 

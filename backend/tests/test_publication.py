@@ -2,9 +2,10 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.knowledge import (ImportRecord, change_status, eligible_chunks, import_record,
-                           latest_version, published_documents)
-from app.models import Chunk, Document, IndexJob
+from app.modules.knowledge.schemas import ImportRecord
+from app.modules.knowledge.service import change_status, import_record, latest_version, published_documents
+from app.modules.knowledge.evidence import eligible_chunks
+from app.modules.knowledge.models import Chunk, Document, IndexJob
 
 
 def add_chunk(session, version):

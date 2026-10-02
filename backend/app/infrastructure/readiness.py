@@ -1,5 +1,37 @@
-"""PLANNED: 现有 MySQL/Qdrant 连通性检查迁入。
+"""Readiness checks for required local services."""
 
-任务：10, 20, 22, 42, ARCH-02；验收与边界见本模块 TODO.md。
-仅占位，未注册路由、建立连接或提供假实现。
-"""
+import httpx
+import pymysql
+
+from app.core.settings import Settings
+
+
+def mysql_is_ready(settings: Settings) -> bool:
+    """Return whether MySQL accepts a short authenticated connection."""
+
+    try:
+        connection = pymysql.connect(
+            host=settings.mysql_host,
+            port=settings.mysql_port,
+            user=settings.mysql_user,
+            password=settings.mysql_password,
+            database=settings.mysql_database,
+            connect_timeout=2,
+            read_timeout=2,
+            write_timeout=2,
+        )
+    except pymysql.MySQLError:
+        return False
+
+    connection.close()
+    return True
+
+
+def qdrant_is_ready(settings: Settings) -> bool:
+    """Return whether Qdrant reports that it is ready for traffic."""
+
+    try:
+        response = httpx.get(f"{settings.qdrant_url.rstrip('/')}/readyz", timeout=2.0)
+        return response.status_code == 200
+    except httpx.HTTPError:
+        return False

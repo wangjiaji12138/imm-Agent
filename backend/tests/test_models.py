@@ -8,7 +8,8 @@ from alembic.migration import MigrationContext
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import IntegrityError
 
-from app.models import Base, DocumentVersion
+from app.infrastructure.orm import Base
+from app.modules.knowledge.models import DocumentVersion
 
 
 def test_status_constraint_and_unknown_date(session, source):
