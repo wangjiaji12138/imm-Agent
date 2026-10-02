@@ -525,3 +525,30 @@
 - 首批只有 NCI 正文。ACS、CRI 已核查官方入口并列为补充目录，未在未确认全文复用条件时批量复制正文。
 - Qdrant 切分/embedding/写入/检索及索引任务工作器属于第三阶段；第二阶段通过模拟残留索引候选验证 SQL 核验。前端仍为现有骨架，问答发送尚未启用。
 - 20 题验证的是格式、引用存在和发布状态；不代表已完成模型回答评测或临床验证。
+
+---
+
+## 2026-10-02｜整体架构、功能分区和任务占位
+
+### 变更
+- `docs/architecture/`：增加总体目录、逐文件职责、依赖与接口边界、现有代码迁移表、跨设备数据生命周期；明确采用模块化单体。
+- 根 `TODO.md` 改为阶段和模块导航；原 01—42 共 18 张任务卡连同完成状态、验收命令与记录完整移至 `docs/tasks/phase-*.md`。新增 ARCH-01 目录设计与 ARCH-02 代码迁移任务。
+- 后端预留 api/core/infrastructure 和 knowledge/retrieval/answering/agent/conversations/feedback/evaluation 七个业务分区；前端预留 features 与 shared；每个功能分区都有 TODO，引用唯一阶段验收卡。
+- 补齐 CLI、提示词、模块/集成/端到端测试计划、生产部署及 CI 示例、评测/安全/发布报告模板；占位明确为未实现，未来 CLI 主动非零退出，CI 的 `.example` 不触发执行。
+- `scripts/check_layout.py`：只读检查架构文件、占位标记、任务覆盖、Python 语法及 Markdown 本地链接。
+- 新增 `data/backups/` 忽略规则；现有 raw、SQL 备份及 Docker 数据卷不移动。备份/恢复 CLI 仍是任务 42 占位。
+- 同步 README 的架构入口与五阶段路线，开发工作流改为在阶段任务卡维护完成状态。
+
+### 验证
+- `docker compose run --rm --no-deps -v ".:/workspace:ro" -w /workspace backend python scripts/check_layout.py` → ok=true，85 个架构条目、20 张任务卡、63 份 Markdown、392 个本地链接，无错误。
+- 对照本轮起点 `3745f12` 的 TODO，去除新增导航和锚点后，五阶段全部原任务文本、勾选及完成记录逐字一致。
+- 在容器内执行六个占位 CLI → 均非零退出并说明“尚未实现”；导入当前 app.main → 不加载规划模块、不新增占位 `/api/` 路由。
+- `docker compose run --rm --no-deps -e IMM_AGENT_TEST_MYSQL=1 -v "./backend/app:/app/app:ro" -v "./backend/tests:/app/tests:ro" backend python -m pytest -p no:cacheprovider` → 34 passed，1 条既有 TestClient 弃用警告。首次挂载整个只读 /app 与现有 data/evals 子挂载冲突，改为分别挂载源码和测试后通过。
+- 容器内 `npm run build` 通过；`npm run lint` 检查 12 个文件，无警告和错误。
+- `docker compose build backend` 通过；新镜像内运行 `docker compose run --rm --no-deps -e IMM_AGENT_TEST_MYSQL=1 backend python -m pytest` → 34 passed，1 条既有警告。`docker compose up -d --no-deps --wait backend` 更新本地后端后健康检查通过。
+- `git diff --check` 通过。
+
+### 范围
+- 本次完成可导航、可检查的架构设计与文件占位；现有第一、二阶段实现保持原入口，未执行 ARCH-02 的实际搬迁。
+- 模块边界是下一轮实现约束，当前检查工具不宣称已验证真实 import 依赖倒置；相应自动检查属于 ARCH-02。
+- 未实现第三阶段 RAG、会话、反馈或自动备份；没有更改数据库结构和既有业务数据。
