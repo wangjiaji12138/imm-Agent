@@ -1,5 +1,12 @@
-"""PLANNED: 请求 ID、限流与安全日志边界。
+"""Assign one opaque request ID without logging request content."""
 
-任务：23, 32, 42, ARCH-02；验收与边界见本模块 TODO.md。
-仅占位，未注册路由、建立连接或提供假实现。
-"""
+from uuid import uuid4
+
+from fastapi import Request
+
+
+async def add_request_id(request: Request, call_next):
+    request.state.request_id = str(uuid4())
+    response = await call_next(request)
+    response.headers["X-Request-ID"] = request.state.request_id
+    return response

@@ -13,4 +13,4 @@
 | [routes/sources.py](routes/sources.py) | GET /api/sources/{chunk_id}，调用实时证据核验 |
 | [routes/feedback.py](routes/feedback.py) | POST /api/feedback，校验会话和回答归属 |
 
-实现顺序与禁止依赖见 [模块边界](../../../docs/architecture/boundaries.md)。dependencies.py、schemas.py 与 routes/health.py 已承接健康检查；问答、会话及错误装配仍待后续任务。
+实现顺序与禁止依赖见 [模块边界](../../../docs/architecture/boundaries.md)。聊天、来源、请求 ID 和统一错误已实现；会话认证与反馈待后续任务。

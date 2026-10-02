@@ -83,7 +83,7 @@ docker compose run --rm backend python -m app.cli.reindex --document <document-i
 
 ### 23｜提供聊天 API
 
-- [ ] 实现 `POST /api/chat` 和 `GET /api/sources/{chunk_id}`。
+- [x] 实现 `POST /api/chat` 和 `GET /api/sources/{chunk_id}`。
 
 `POST /api/chat` 输入 `message` 和可空 `conversation_id`，输出 `request_id`、`conversation_id`、任务 22 的字段及来源摘要。`GET /api/sources/{chunk_id}` 返回资料标题、机构、日期、来源 URL、原文片段和片段位置。
 
@@ -94,3 +94,5 @@ docker compose run --rm backend python -m app.cli.reindex --document <document-i
 交给编程助手：
 
 > 完成 TODO 任务 23。实现两个 API、请求/响应模型、统一错误结构和 request ID。连接现有检索与回答服务。写接口测试，证明回答引用能通过 sources 接口解析。暂不实现登录、流式输出和反馈。
+
+验收记录（2026-10-02）：新增单轮工作流、聊天/来源路由、请求 ID、统一 404/422/503 错误结构及实时 SQL 来源核验。接口测试覆盖 200、404、422、503、撤回资料、紧急分流和 OpenAPI 路径。真实调用 `POST /api/chat` 返回 200、3 条引用，逐条请求 `/api/sources/{chunk_id}` 均返回 200。当前 `conversation_id` 仅透传，任务 31 增加凭据校验、持久化和多轮上下文。

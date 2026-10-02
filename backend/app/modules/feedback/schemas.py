@@ -1,5 +1,20 @@
-"""PLANNED: helpful/not_helpful 与最多 500 字备注。
+"""Minimal feedback contract."""
 
-任务：32, 41。职责与验收入口见同目录 TODO.md。
-本文件仅占位；尚未实现，不提供假返回值或网络/数据库副作用。
-"""
+from typing import Literal
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class FeedbackInput(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    request_id: UUID
+    rating: Literal["helpful", "not_helpful"]
+    note: str | None = Field(default=None, max_length=500)
+
+
+class FeedbackResult(BaseModel):
+    request_id: UUID
+    rating: Literal["helpful", "not_helpful"]
+    note: str | None

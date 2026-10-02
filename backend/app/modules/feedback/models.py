@@ -1,5 +1,21 @@
-"""PLANNED: 反馈表与同会话同回答唯一约束。
+"""One editable feedback record per authenticated answer."""
 
-任务：32, 41。职责与验收入口见同目录 TODO.md。
-本文件仅占位；尚未实现，不提供假返回值或网络/数据库副作用。
-"""
+from datetime import datetime
+from uuid import uuid4
+
+from sqlalchemy import DateTime, ForeignKey, String, Text, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.infrastructure.orm import Base
+
+
+class Feedback(Base):
+    __tablename__ = "feedback"
+    __table_args__ = (UniqueConstraint("conversation_id", "request_id", name="uq_feedback_answer"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    conversation_id: Mapped[str] = mapped_column(ForeignKey("conversations.id", ondelete="CASCADE"), index=True)
+    request_id: Mapped[str] = mapped_column(String(36))
+    rating: Mapped[str] = mapped_column(String(12))
+    note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

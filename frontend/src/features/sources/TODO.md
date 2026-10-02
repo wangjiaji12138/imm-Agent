@@ -6,4 +6,4 @@
 | --- | --- |
 | [SourceCard.tsx](SourceCard.tsx) | 机构、标题、日期、支持结论及原文展开 |
 
-当前文件均占位；现有页面仍在 App.tsx。feature 只通过 shared/api 访问后端，不直接访问数据库或模型，不读写其他 feature 的内部状态；跨 feature 的编排由 App 完成。新增实际功能时再按任务补交互测试。
+来源卡片已接入回答列表，展开时通过 shared/api 实时获取原文和位置。

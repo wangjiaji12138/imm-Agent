@@ -14,7 +14,7 @@ from app.modules.answering.schemas import AnswerResult, RouteResult
 from app.modules.retrieval.schemas import SearchResult
 
 PROMPT_VERSION = "v1"
-ROUTING_VERSION = "routing-v1"
+ROUTING_VERSION = "routing-v2"
 PROMPT_DIR = Path(__file__).with_name("prompts")
 logger = logging.getLogger(__name__)
 
@@ -40,21 +40,27 @@ def _complete(provider: ModelProvider, system: str, user: str, version: str):
             logger.info("model_call prompt_version=%s elapsed_ms=%s failed=true", version, elapsed_ms)
 
 
-def route_request(question: str, provider: ModelProvider) -> AnswerResult | None:
-    """Return a non-search business result before retrieval, or None to search."""
+def classify_request(question: str, provider: ModelProvider, history: list | None = None) -> RouteResult:
+    """Classify request and resolve references within authenticated bounded history."""
     if not 2 <= len(question.strip()) <= 500:
         raise ValueError("问题长度必须为 2～500 字符")
-    system = (PROMPT_DIR / "routing-v1.md").read_text(encoding="utf-8")
-    output = _complete(provider, system, json.dumps({"question": question}, ensure_ascii=False), ROUTING_VERSION)
+    system = (PROMPT_DIR / "routing-v2.md").read_text(encoding="utf-8")
+    supplied_history = [item.model_dump() for item in (history or [])]
+    output = _complete(provider, system, json.dumps({"question": question, "history": supplied_history}, ensure_ascii=False), ROUTING_VERSION)
     try:
-        route = RouteResult.model_validate_json(output.content)
-        if route.result_type == "search":
-            return None
-        return AnswerResult(result_type=route.result_type, answer=route.response,
-                            citations=[], evidence_status="not_applicable",
-                            follow_up_question=route.response if route.result_type == "clarify" else None)
+        return RouteResult.model_validate_json(output.content)
     except (ValidationError, ValueError) as exc:
         raise InvalidModelResponse("模型分流响应无效") from exc
+
+
+def route_request(question: str, provider: ModelProvider) -> AnswerResult | None:
+    """Compatibility entry point for one-turn clients."""
+    route = classify_request(question, provider)
+    if route.result_type == "search":
+        return None
+    return AnswerResult(result_type=route.result_type, answer=route.response,
+                        citations=[], evidence_status="not_applicable",
+                        follow_up_question=route.response if route.result_type == "clarify" else None)
 
 
 def generate_answer(question: str, evidence: list[SearchResult], provider: ModelProvider) -> AnswerResult:

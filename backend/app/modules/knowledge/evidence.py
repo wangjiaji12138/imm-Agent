@@ -3,7 +3,7 @@
 from sqlalchemy.orm import Session
 
 from app.modules.knowledge import repository
-from app.modules.knowledge.schemas import ChunkSnapshot, VerifiedEvidence
+from app.modules.knowledge.schemas import ChunkSnapshot, SourceDetails, VerifiedEvidence
 
 
 def eligible_chunks(session: Session, candidate_ids: list[str]) -> list[ChunkSnapshot]:
@@ -20,3 +20,15 @@ def search_evidence(session: Session, candidate_versions: dict[str, str], *, lan
                                        title=doc.title, organization=doc.organization,
                                        source_url=doc.source_url, published_at=doc.published_at)
             for chunk_id, (chunk, doc) in found.items()}
+
+
+def get_source_details(session: Session, chunk_id: str) -> SourceDetails | None:
+    found = repository.source_details(session, chunk_id)
+    if found is None:
+        return None
+    chunk, doc = found
+    return SourceDetails(chunk_id=chunk.id, document_id=doc.id, version_id=chunk.version_id,
+                         text=chunk.text, title=doc.title, organization=doc.organization,
+                         source_url=doc.source_url, published_at=doc.published_at,
+                         title_path=chunk.title_path, char_start=chunk.char_start,
+                         char_end=chunk.char_end)

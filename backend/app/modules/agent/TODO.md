@@ -10,13 +10,13 @@
 
 编排 retrieval、answering、conversations 的服务；下游模块不反向依赖 agent。首版使用 Python 显式流程。
 
-## 计划文件（当前均为占位）
+## 文件
 
 | 文件 | 职责 |
 | --- | --- |
-| [state.py](state.py) | 当前问题、已确认上下文、证据和阶段结果 |
+| [state.py](state.py) | 单轮回答与证据的脱离数据库结果，已实现；会话上下文待任务 31 |
 | [policy.py](policy.py) | 按 mvp-scope 对 emergency/refuse/out_of_scope/clarify 分流 |
-| [workflow.py](workflow.py) | 先分流，再检索，再生成，再校验；故障走接口错误 |
+| [workflow.py](workflow.py) | 先分流，再检索，再生成，已实现；会话上下文待任务 31 |
 
 ## 实现顺序
 

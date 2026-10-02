@@ -7,4 +7,4 @@
 | [client.ts](client.ts) | 统一 fetch、超时、request_id 和错误转换 |
 | [generated.ts](generated.ts) | 从后端 OpenAPI 生成的类型落点，当前并非已生成契约 |
 
-当前文件均占位；现有页面仍在 App.tsx。feature 只通过 shared/api 访问后端，不直接访问数据库或模型，不读写其他 feature 的内部状态；跨 feature 的编排由 App 完成。新增实际功能时再按任务补交互测试。
+客户端与任务 23 OpenAPI 契约对应的类型已接入页面。会话和反馈契约待后续任务扩展。

@@ -18,6 +18,8 @@ import {
   Tooltip, Typography,
 } from '@mui/material'
 import './App.css'
+import { ChatPanel } from './features/chat/ChatPanel'
+import { useChat } from './features/chat/useChat'
 
 const modes = [
   { id: 'ask', label: '科普问答', icon: ChatBubbleOutlineRoundedIcon, title: '从一个问题，开始了解', description: '概念、术语与作用机制，都可以从这里开始。', prompts: ['什么是癌症免疫疗法？', 'PD-1 和 PD-L1 有什么关系？', 'CAR-T 细胞如何识别癌细胞？'] },
@@ -41,6 +43,7 @@ function App() {
   const [serviceStatus, setServiceStatus] = useState<ServiceStatus>('checking')
   const [healthAttempt, setHealthAttempt] = useState(0)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const chat = useChat()
   const currentMode = modes.find((item) => item.id === mode)!
   const sameTherapy = leftTherapy === rightTherapy
 
@@ -76,11 +79,20 @@ function App() {
   }
 
   function newConversation() {
+    chat.reset()
     setDraft('')
     setMode('ask')
     setLeftTherapy(therapies[0])
     setRightTherapy(therapies[2])
     setDimension(dimensions[0])
+  }
+
+  async function sendQuestion() {
+    if (await chat.send(draft)) setDraft('')
+  }
+
+  async function retryQuestion() {
+    if (await chat.retry()) setDraft('')
   }
 
   const statusLabel = serviceStatus === 'checking' ? '正在检查服务' : serviceStatus === 'online' ? '服务正常' : '服务未连接'
@@ -102,9 +114,9 @@ function App() {
         </nav>
         <div className="conversation-area">
           <p className="section-label">当前会话</p>
-          <div className="draft-summary"><ChatBubbleOutlineRoundedIcon fontSize="small" /><span>{draft.trim() || '开始你的第一个问题'}</span></div>
-          <p className="draft-hint">草稿仅保留在当前页面</p>
-          <div className="history-empty"><HistoryRoundedIcon /><span>尚无历史会话</span><small>会话功能开放后，可在这里继续追问。</small></div>
+          <div className="draft-summary"><ChatBubbleOutlineRoundedIcon fontSize="small" /><span>{chat.turns[0]?.question || draft.trim() || '开始你的第一个问题'}</span></div>
+          <p className="draft-hint">本页已回答 {chat.turns.length} 个问题</p>
+          <div className="history-empty"><HistoryRoundedIcon /><span>当前页面中的对话</span><small>新建会话会开始独立的对话；刷新页面会清除本页记录。</small></div>
         </div>
         <div className="sidebar-note">
           <VerifiedOutlinedIcon /><strong>从知识出发，以证据为依据</strong>
@@ -151,6 +163,7 @@ function App() {
                   <Typography component="h2" variant="subtitle1">{currentMode.title}</Typography>
                   <p className="muted composer-description">{currentMode.description}</p>
                 </section>
+                <ChatPanel turns={chat.turns} sending={chat.sending} error={chat.error} onRetry={() => void retryQuestion()} getCredentials={chat.getCredentials} />
 
                 {mode === 'compare' && (
                   <div className="comparison-builder">
@@ -181,8 +194,8 @@ function App() {
                   </div>
                 </section>
 
-                <section className="workflow-strip" aria-label="问答功能开放后的处理流程">
-                  <div className="workflow-title"><AutoAwesomeRoundedIcon /><strong>一份可追溯的回答</strong><span>功能规划</span></div>
+                <section className="workflow-strip" aria-label="问答处理流程">
+                  <div className="workflow-title"><AutoAwesomeRoundedIcon /><strong>一份可追溯的回答</strong></div>
                   <div className="workflow-steps">{['理解问题', '检索已发布资料', '解释并附上来源'].map((step, index) => <div key={step}><span>{index + 1}</span>{step}{index < 2 && <ArrowForwardRoundedIcon fontSize="small" />}</div>)}</div>
                 </section>
               </div>
@@ -191,7 +204,7 @@ function App() {
                 <Paper variant="outlined" className="evidence-card">
                   <div className="evidence-title"><span className="evidence-icon"><DescriptionOutlinedIcon /></span><div><Typography component="h2" variant="subtitle1">资料来源</Typography><p>从结论，回到原文</p></div></div>
                   <div className="evidence-content">
-                    <div className="empty-state source-empty"><DescriptionOutlinedIcon /><strong>暂无引用资料</strong><p>收到回答后，这里将展示支持关键结论的来源、日期与原文片段。</p><Button size="small" onClick={() => setDialog('sources')}>来源包含哪些信息？</Button></div>
+                    <div className="empty-state source-empty"><DescriptionOutlinedIcon /><strong>{chat.turns.length ? '来源随回答展示' : '暂无引用资料'}</strong><p>{chat.turns.length ? '点击回答下方的来源卡片，可查看支持结论、原文位置和原始链接。' : '收到回答后，可在回答下方展开每条引用的原文片段。'}</p><Button size="small" onClick={() => setDialog('sources')}>来源包含哪些信息？</Button></div>
                   </div>
                 </Paper>
                 <Paper variant="outlined" className="evidence-legend">
@@ -209,10 +222,11 @@ function App() {
             <TextField className="question-input" fullWidth multiline size="small" minRows={1} maxRows={4} value={draft}
               inputRef={inputRef} label="你想了解什么？" placeholder="例如：PD-1 和 PD-L1 有什么关系？"
               onChange={(event) => setDraft(event.target.value)}
+              onKeyDown={(event) => { if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) { event.preventDefault(); void sendQuestion() } }}
               slotProps={{ htmlInput: { maxLength: 500, 'aria-describedby': 'draft-notice' } }}
             />
-            <div className="composer-bottom"><span className="draft-counter">{draft.length} / 500</span><Button variant="contained" disabled endIcon={<SendRoundedIcon />} disableElevation>发送问题</Button></div>
-            <div className="draft-notice" id="draft-notice"><span className="small-dot" />问答即将开放 · 目前可以编辑草稿，暂不发送或生成回答</div>
+            <div className="composer-bottom"><span className="draft-counter">{draft.length} / 500</span><Button variant="contained" disabled={chat.sending || draft.trim().length < 2} onClick={() => void sendQuestion()} endIcon={<SendRoundedIcon />} disableElevation>{chat.sending ? '正在回答' : '发送问题'}</Button></div>
+            <div className="draft-notice" id="draft-notice"><span className="small-dot" />仅提供一般科普，不替代专业诊疗。按 Ctrl/⌘ + Enter 发送。</div>
           </Paper>
         </main>
       </div>
@@ -220,7 +234,7 @@ function App() {
       <Dialog open={dialog !== null} onClose={() => setDialog(null)} maxWidth="sm" fullWidth aria-labelledby="guide-title">
         <DialogTitle id="guide-title" sx={{ pr: 7 }}>{dialog === 'sources' ? '让每一条引用都可核查' : '如何使用 Imm-Agent'}<IconButton aria-label="关闭说明" onClick={() => setDialog(null)} sx={{ position: 'absolute', right: 12, top: 12 }}><CloseRoundedIcon /></IconButton></DialogTitle>
         <DialogContent className="guide-content">
-          {dialog === 'sources' ? <><p>资料来源将包含标题、发布机构、资料日期、支持的结论和原文片段，并提供原始链接。</p><p>当前尚无回答与引用，不展示示例文献作为真实证据。</p></> : <><p>选择科普问答、疗法比较或研究进展，点击示例问题，或在底部输入框编写问题。疗法比较可以先选择两个对象与比较维度。</p><p>问答开放后，问题与回答会按时间顺序显示在输入框上方，资料来源单独展示。目前可编辑草稿和检查服务连接；发送、生成回答和历史会话尚未开放。刷新页面会清除草稿，“新建会话”会重置当前草稿。</p><p>服务连接正常仅表示基础服务可用，不代表问答已开放。未来回答会以已审核资料为依据，不提供个体化诊断、治疗选择或剂量建议。</p></>}
+          {dialog === 'sources' ? <><p>来源卡片包含标题、发布机构、资料日期和支持的结论。展开后可查看原文片段、位置和原始链接。</p><p>资料撤回后，来源接口会停止展示该片段。</p></> : <><p>选择科普问答、疗法比较或研究进展，点击示例问题，或在底部输入框编写问题。疗法比较可以先选择两个对象与比较维度。</p><p>问题与回答按顺序显示，来源在每条回答下方。失败后草稿会保留，可点击重试。新建会话会使用独立凭据，刷新页面会清除本页记录。</p><p>回答以已审核资料为依据，不提供个体化诊断、治疗选择或剂量建议。</p></>}
         </DialogContent>
       </Dialog>
     </div>

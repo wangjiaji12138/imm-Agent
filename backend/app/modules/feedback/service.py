@@ -1,5 +1,16 @@
-"""PLANNED: 归属验证、输入限制和重复提交更新。
+"""Authenticate conversation and answer ownership before updating feedback."""
 
-任务：32, 41。职责与验收入口见同目录 TODO.md。
-本文件仅占位；尚未实现，不提供假返回值或网络/数据库副作用。
-"""
+from sqlalchemy.orm import Session
+
+from app.modules.conversations.service import ConversationNotFound, authenticate, owns_request
+from app.modules.feedback.repository import save
+from app.modules.feedback.schemas import FeedbackInput, FeedbackResult
+
+
+def submit(session: Session, conversation_id: str, token: str | None,
+           body: FeedbackInput) -> FeedbackResult:
+    conversation = authenticate(session, conversation_id, token)
+    if not owns_request(session, conversation.id, str(body.request_id)):
+        raise ConversationNotFound
+    row = save(session, conversation.id, str(body.request_id), body.rating, body.note)
+    return FeedbackResult(request_id=body.request_id, rating=row.rating, note=row.note)

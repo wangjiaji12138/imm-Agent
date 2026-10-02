@@ -86,3 +86,15 @@ def search_evidence(session: Session, candidate_versions: dict[str, str], *, lan
         statement = statement.where(Document.published_at <= published_to)
     return {chunk.id: (chunk, doc) for chunk, doc in session.execute(statement)
             if chunk.version_id == candidate_versions[chunk.id]}
+
+
+def source_details(session: Session, chunk_id: str) -> tuple[Chunk, Document] | None:
+    """Get a chunk only while its document and version remain publishable."""
+    latest = select(DocumentVersion.document_id, func.max(DocumentVersion.version_number).label("number")) \
+        .group_by(DocumentVersion.document_id).subquery()
+    statement = select(Chunk, Document).join(DocumentVersion, Chunk.version_id == DocumentVersion.id) \
+        .join(Document, DocumentVersion.document_id == Document.id) \
+        .join(latest, (latest.c.document_id == Document.id) & (latest.c.number == DocumentVersion.version_number)) \
+        .where(Chunk.id == chunk_id, Document.status == "published") \
+        .execution_options(populate_existing=True)
+    return session.execute(statement).one_or_none()

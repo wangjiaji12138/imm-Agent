@@ -1,5 +1,8 @@
-"""PLANNED: 会话引用、凭据校验后上下文和消息 DTO。
+"""Small detached context sent to the routing model."""
 
-任务：31, 41。职责与验收入口见同目录 TODO.md。
-本文件仅占位；尚未实现，不提供假返回值或网络/数据库副作用。
-"""
+from pydantic import BaseModel
+
+
+class HistoryTurn(BaseModel):
+    question: str
+    answer: str

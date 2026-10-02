@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,6 +10,8 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/health': 'http://backend:8000',
+      '/api': 'http://backend:8000',
     },
   },
+  test: { environment: 'jsdom' },
 })

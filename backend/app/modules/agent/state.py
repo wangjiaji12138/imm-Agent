@@ -1,5 +1,12 @@
-"""PLANNED: 当前问题、已确认上下文、证据和阶段结果。
+"""Detached result of one routed question."""
 
-任务：22, 23, 31, 41。职责与验收入口见同目录 TODO.md。
-本文件仅占位；尚未实现，不提供假返回值或网络/数据库副作用。
-"""
+from dataclasses import dataclass
+
+from app.modules.answering.schemas import AnswerResult
+from app.modules.retrieval.schemas import SearchResult
+
+
+@dataclass(frozen=True)
+class QuestionResult:
+    answer: AnswerResult
+    evidence: list[SearchResult]

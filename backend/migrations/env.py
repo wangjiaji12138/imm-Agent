@@ -4,6 +4,8 @@ from sqlalchemy import create_engine, pool
 from app.infrastructure.database import database_url
 from app.infrastructure.orm import Base
 from app.modules.knowledge import models  # Register the six knowledge tables.
+from app.modules.conversations import models as conversation_models  # noqa: F401
+from app.modules.feedback import models as feedback_models  # noqa: F401
 
 config = context.config
 target_metadata = Base.metadata

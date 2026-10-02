@@ -44,11 +44,16 @@ class RouteResult(BaseModel):
 
     result_type: Literal["search", "clarify", "refuse", "out_of_scope", "emergency"]
     response: str | None = None
+    search_query: str | None = None
 
     @model_validator(mode="after")
     def coherent(self):
         if self.result_type == "search" and self.response is not None:
             raise ValueError("检索分支不能包含响应")
+        if self.result_type == "search" and self.search_query is not None and not 2 <= len(self.search_query) <= 500:
+            raise ValueError("独立检索问题长度无效")
         if self.result_type != "search" and not self.response:
             raise ValueError("分流响应不能为空")
+        if self.result_type != "search" and self.search_query is not None:
+            raise ValueError("非检索分支不能包含检索问题")
         return self

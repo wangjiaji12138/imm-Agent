@@ -495,6 +495,27 @@
   margin: 6px 0 0;
 }
 
+.chat-panel { display: grid; gap: 12px; }
+.chat-turn { padding: 16px; border-radius: 14px !important; }
+.chat-question { margin: 0 0 12px; padding: 10px 12px; border-radius: 10px; background: #edf1fd; color: #34457f; font-weight: 650; line-height: 1.6; }
+.chat-answer > p { margin: 8px 0 0; color: #34405c; white-space: pre-wrap; line-height: 1.8; }
+.chat-answer > small { display: block; margin-top: 6px; color: var(--muted); }
+.answer-status { display: inline-block; padding: 3px 8px; border-radius: 999px; background: #eaf6f1; color: #287d60; font-size: 11px; font-weight: 700; }
+.answer-status.insufficient { background: #fff2df; color: #9b6626; }
+.answer-status.conflicting { background: #f0edff; color: #6b60af; }
+.answer-status.not_applicable { background: #edf0f6; color: #69758d; }
+.turn-sources { display: grid; gap: 8px; margin-top: 15px; padding-top: 12px; border-top: 1px solid var(--line); }
+.turn-sources > strong { font-size: 12px; color: #586683; }
+.source-card { padding: 10px 12px; border: 1px solid #e3e8f4; border-radius: 10px; background: #fafbff; }
+.source-card > strong { display: block; color: #33446c; font-size: 12px; }
+.source-card p { margin: 5px 0; line-height: 1.65; }
+.source-meta { color: #75819a; font-size: 11px; }
+.source-claim { color: #495875; font-size: 12px; }
+.source-detail { display: grid; gap: 7px; margin-top: 7px; padding: 10px; border-radius: 8px; background: #fff; font-size: 12px; }
+.source-detail p { margin: 0; white-space: pre-wrap; }
+.source-detail small { color: #7c879e; }
+.source-detail a { justify-self: start; }
+
 .comparison-builder {
   display: grid;
   gap: 12px;

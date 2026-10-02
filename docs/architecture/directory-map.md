@@ -29,9 +29,9 @@
 | [backend/app/modules/answering/ports.py](../../backend/app/modules/answering/ports.py) | 现有实现 | 22 | 模型 Provider 输入输出及用量接口 |
 | [backend/app/modules/answering/service.py](../../backend/app/modules/answering/service.py) | 现有实现 | 22 | 预检分流、空证据短路、一次超时重试、结构化生成 |
 | [backend/app/modules/answering/citations.py](../../backend/app/modules/answering/citations.py) | 现有实现 | 22 | 引用 ID 必须来自本次 Evidence；claim 事实支持待人工评测 |
-| [backend/app/modules/agent/state.py](../../backend/app/modules/agent/state.py) | 待实现占位 | 22 / 23 / 31 / 41 | 当前问题、已确认上下文、证据和阶段结果 |
+| [backend/app/modules/agent/state.py](../../backend/app/modules/agent/state.py) | 现有实现 | 22 / 23 / 31 / 41 | 单轮回答和证据结果；会话状态待任务 31 |
 | [backend/app/modules/agent/policy.py](../../backend/app/modules/agent/policy.py) | 待实现占位 | 22 / 23 / 31 / 41 | 按 mvp-scope 对 emergency/refuse/out_of_scope/clarify 分流 |
-| [backend/app/modules/agent/workflow.py](../../backend/app/modules/agent/workflow.py) | 待实现占位 | 22 / 23 / 31 / 41 | 先分流，再检索，再生成，再校验；故障走接口错误 |
+| [backend/app/modules/agent/workflow.py](../../backend/app/modules/agent/workflow.py) | 现有实现 | 22 / 23 / 31 / 41 | 先分流，再检索，再生成；故障走接口错误 |
 | [backend/app/modules/conversations/schemas.py](../../backend/app/modules/conversations/schemas.py) | 待实现占位 | 31 / 41 | 会话引用、凭据校验后上下文和消息 DTO |
 | [backend/app/modules/conversations/models.py](../../backend/app/modules/conversations/models.py) | 待实现占位 | 31 / 41 | 会话/消息表，新增 Alembic 迁移注册 |
 | [backend/app/modules/conversations/repository.py](../../backend/app/modules/conversations/repository.py) | 待实现占位 | 31 / 41 | 会话隔离条件和消息读写 |
@@ -46,13 +46,13 @@
 | [backend/app/modules/evaluation/answers.py](../../backend/app/modules/evaluation/answers.py) | 待实现占位 | 13 / 21 / 40 / ARCH-02 | 独立集端到端运行及逐条审查材料 |
 | [backend/app/modules/evaluation/metrics.py](../../backend/app/modules/evaluation/metrics.py) | 待实现占位 | 13 / 21 / 40 / ARCH-02 | 引用、证据不足行为、成功率、P95 和成本计算 |
 | [backend/app/modules/evaluation/reports.py](../../backend/app/modules/evaluation/reports.py) | 待实现占位 | 13 / 21 / 40 / ARCH-02 | 按运行 ID 写不可覆盖的版本报告与汇总 |
-| [backend/app/api/dependencies.py](../../backend/app/api/dependencies.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | 健康检查依赖装配；问答与会话装配待后续任务 |
-| [backend/app/api/schemas.py](../../backend/app/api/schemas.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | HealthResponse 与 ReadinessResponse；问答契约待任务 23 |
-| [backend/app/api/errors.py](../../backend/app/api/errors.py) | 待实现占位 | 23 / 32 / 42 / ARCH-02 | 统一 error code/message/request_id 与 404/422/503 |
-| [backend/app/api/middleware.py](../../backend/app/api/middleware.py) | 待实现占位 | 23 / 32 / 42 / ARCH-02 | 请求 ID、限流与安全日志边界 |
+| [backend/app/api/dependencies.py](../../backend/app/api/dependencies.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | 健康、问答与来源依赖装配；会话认证待任务 31 |
+| [backend/app/api/schemas.py](../../backend/app/api/schemas.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | 健康、问答、来源与错误契约 |
+| [backend/app/api/errors.py](../../backend/app/api/errors.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | 统一 error code/message/request_id 与 404/422/503 |
+| [backend/app/api/middleware.py](../../backend/app/api/middleware.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | 请求 ID；限流待任务 42 |
 | [backend/app/api/routes/health.py](../../backend/app/api/routes/health.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | /health 与 /ready 路由，保持响应及依赖覆盖能力 |
-| [backend/app/api/routes/chat.py](../../backend/app/api/routes/chat.py) | 待实现占位 | 23 / 32 / 42 / ARCH-02 | POST /api/chat，调用注入的工作流 |
-| [backend/app/api/routes/sources.py](../../backend/app/api/routes/sources.py) | 待实现占位 | 23 / 32 / 42 / ARCH-02 | GET /api/sources/{chunk_id}，调用实时证据核验 |
+| [backend/app/api/routes/chat.py](../../backend/app/api/routes/chat.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | POST /api/chat，调用注入的工作流 |
+| [backend/app/api/routes/sources.py](../../backend/app/api/routes/sources.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | GET /api/sources/{chunk_id}，调用实时证据核验 |
 | [backend/app/api/routes/feedback.py](../../backend/app/api/routes/feedback.py) | 待实现占位 | 23 / 32 / 42 / ARCH-02 | POST /api/feedback，校验会话和回答归属 |
 | [backend/app/core/settings.py](../../backend/app/core/settings.py) | 现有实现 | 02 / 41 / 42 / ARCH-02 | 环境变量配置与 get_settings 缓存 |
 | [backend/app/core/errors.py](../../backend/app/core/errors.py) | 现有实现 | 02 / 41 / 42 / ARCH-02 | 依赖超时错误类型，不依赖 HTTP 或厂商 SDK |

@@ -1,5 +1,18 @@
-"""PLANNED: 先分流，再检索，再生成，再校验；故障走接口错误。
+"""One-turn question flow: route, search, then generate from verified evidence."""
 
-任务：22, 23, 31, 41。职责与验收入口见同目录 TODO.md。
-本文件仅占位；尚未实现，不提供假返回值或网络/数据库副作用。
-"""
+from app.modules.agent.state import QuestionResult
+from app.modules.answering.schemas import AnswerResult
+from app.modules.answering.service import classify_request, generate_answer
+from app.modules.conversations.schemas import HistoryTurn
+
+
+def run_question(message: str, provider, search, history: list[HistoryTurn] | None = None) -> QuestionResult:
+    route = classify_request(message, provider, history)
+    if route.result_type != "search":
+        answer = AnswerResult(result_type=route.result_type, answer=route.response,
+                              citations=[], evidence_status="not_applicable",
+                              follow_up_question=route.response if route.result_type == "clarify" else None)
+        return QuestionResult(answer=answer, evidence=[])
+    query = route.search_query or message
+    evidence = search(query)
+    return QuestionResult(answer=generate_answer(query, evidence, provider), evidence=evidence)

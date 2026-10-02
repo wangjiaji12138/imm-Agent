@@ -83,3 +83,10 @@ class VerifiedEvidence(Snapshot):
     organization: str
     source_url: str
     published_at: date | None
+
+
+class SourceDetails(VerifiedEvidence):
+    version_id: str
+    title_path: str
+    char_start: int
+    char_end: int
