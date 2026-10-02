@@ -494,3 +494,34 @@
 ### Not touched
 - 未修改应用代码、依赖、TODO 任务状态或开发工作流；保留全部既有 REVIEW 条目。
 - 本次只做文档检查，未重新运行容器构建、应用测试或浏览器交互；正文中的运行命令供读者练习使用。
+
+---
+
+## 2026-10-02｜第二阶段：可追溯知识库与本机环境
+
+### 变更
+- 安装 Docker Desktop 4.93.0 到 `/Applications/Docker.app`，Docker CLI 29.8.1、Compose 5.5.1；在 `/opt/homebrew/bin` 添加 Docker 与凭据助手链接。Homebrew 安装步骤遇到系统链接需要管理员密码，最终使用已下载的官方 DMG 直接复制安装。
+- 创建被 Git 忽略的 `.env`，随机生成本地 MySQL 密码，不记录密码值；后端和前端依赖在容器内安装。Docker 安装期间使用 `/private/tmp/imm-agent-stage2-venv` 做了隔离预检，正式验收以容器结果为准。
+- `backend/app/models.py`、`database.py`、`migrations/`：六张知识表、状态/版本/哈希约束及 Alembic 迁移。
+- `backend/app/knowledge.py`、`cli/`：逐行 JSONL 导入、清洗与去重、审核发布/撤回/过期、事务内索引任务、SQL 当前状态和最新版本核验。
+- `data/sources.json`、`docs/knowledge-sources.md`：五篇 NCI 官方资料及复用规则，ACS/CRI 补充目录。原始网页、提取正文、哈希和抓取记录仅保留在 Git 忽略的 `data/raw/`。
+- `evals/questions.jsonl`、`backend/app/evaluation.py`：20 道中文评测题、15/5 开发与独立测试划分、Pydantic 格式及真实数据库来源验证。
+- `compose.yaml` 挂载 data 和只读 evals；Dockerfile 包含迁移文件；新增来源、评测与第二阶段运行文档，更新 TODO 和开发工作流。
+
+### 验证
+- macOS 15.4.1 / Apple Silicon；Docker 引擎 `linux/aarch64`；前后端、MySQL、Qdrant 使用 `linux/arm64` 镜像。
+- `docker compose config --quiet`、`docker compose build backend frontend` 通过。
+- MySQL 8.4 的 `alembic upgrade head`、重复 upgrade、确认空资料库后 `downgrade base`、检查六表移除、再次 upgrade 全部通过。
+- `docker compose run --rm -e IMM_AGENT_TEST_MYSQL=1 backend python -m pytest` → **34 passed**，保留 1 条上游 TestClient 弃用警告。真实 MySQL 测试验证 CHECK 错误码 3819、内容哈希唯一约束及撤回后残留候选被过滤；测试写入均回滚。
+- 虚构清单首次 `2 success / 1 failed`，再次 `2 skipped / 1 failed`，均按约定退出 1。两条虚构资料验收后精确清理，不进入正式证据池。
+- NCI 清单首次 `5 success`，再次 `5 skipped`；原始正文哈希与来源快照元数据一致。正式容器 `fetch_sources --output data/raw/container-check` 也成功抓取全部五篇。
+- 待审核时 `validate_evals` 返回 `ready=false` 并逐项报告未发布；五篇逐一核对并 publish 后返回 `ready=true, total=20, dev=15, test=5`。正式资料库保留五篇 published NCI 资料。
+- `docker compose run --rm --no-deps frontend npm run build`、`npm run lint` 通过；lint 无警告或错误。
+- 实际 `/health`、`/ready` 及前端 `/health` 代理均返回约定响应；四个服务为 healthy。
+- `git diff --check` 通过；`.env` 与 `data/raw/` 均被 Git 忽略。
+
+### 范围与限制
+- 本阶段的 published 表示通过来源与提取完整性基础审核，可以进入一般科普的证据池；不表示医学专家审核。资料日期较早，不将其当作 2026 年最新获批清单或中国临床适用结论。
+- 首批只有 NCI 正文。ACS、CRI 已核查官方入口并列为补充目录，未在未确认全文复用条件时批量复制正文。
+- Qdrant 切分/embedding/写入/检索及索引任务工作器属于第三阶段；第二阶段通过模拟残留索引候选验证 SQL 核验。前端仍为现有骨架，问答发送尚未启用。
+- 20 题验证的是格式、引用存在和发布状态；不代表已完成模型回答评测或临床验证。

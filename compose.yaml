@@ -21,6 +21,9 @@ services:
   backend:
     build:
       context: ./backend
+    volumes:
+      - ./data:/app/data
+      - ./evals:/app/evals:ro
     environment:
       IMM_AGENT_ENVIRONMENT: development
       IMM_AGENT_LOG_LEVEL: ${IMM_AGENT_LOG_LEVEL:-INFO}

@@ -2,7 +2,7 @@
 
 这份清单用于直接驱动开发。一次只做一个任务卡；完成卡片里的全部验收后，才把 `- [ ]` 改成 `- [x]`。
 
-当前仓库只有 `README.md` 和本文件，还没有应用代码。本项目从空仓库开始实现，不寻找、不导入、不适配任何旧网页、旧爬虫、旧代码或旧数据库。下面定义的目录、接口和数据结构都是新系统的唯一实现目标。
+当前已完成第一阶段应用骨架和第二阶段可追溯知识库（任务 10—13）。本项目从空仓库开始实现，不导入旧网页、旧爬虫、旧代码或旧数据库。第二阶段运行步骤见 [知识库工作流](docs/stage-two-workflow.md)，来源与复用规则见 [来源目录](docs/knowledge-sources.md)。
 
 ## 使用方法
 
@@ -145,7 +145,7 @@ docker compose run --rm frontend npm run lint
 
 ### 10｜定义数据库表
 
-- [ ] 用 SQLAlchemy 和 Alembic 创建首版数据表。
+- [x] 用 SQLAlchemy 和 Alembic 创建首版数据表。
 
 必须包含：
 
@@ -163,9 +163,11 @@ docker compose run --rm frontend npm run lint
 
 > 完成 TODO 任务 10。按卡片中的字段和约束创建 SQLAlchemy 2 模型及首个 Alembic 迁移。补充模型级测试，验证状态约束、内容哈希唯一性和可空发布日期。不要创建聊天表或用户表。
 
+完成记录：文件=`backend/app/models.py`、`backend/app/database.py`、`backend/migrations/`；验证=MySQL 8.4 上 upgrade head、再次 upgrade、空库 downgrade base、确认六表移除、重新 upgrade 全部通过；容器内测试含真实 MySQL 状态约束和哈希唯一性验证通过；备注=无。
+
 ### 11｜导入一份可追溯资料
 
-- [ ] 实现命令 `docker compose run --rm backend python -m app.cli.import_documents <manifest.jsonl>`。
+- [x] 实现命令 `docker compose run --rm backend python -m app.cli.import_documents <manifest.jsonl>`。
 
 每行输入格式：
 
@@ -181,9 +183,11 @@ docker compose run --rm frontend npm run lint
 
 > 完成 TODO 任务 11。实现 JSONL 清单导入命令、输入校验、正文清洗、SHA-256 去重和逐条错误记录。增加最小样例与 pytest 测试，测试重复导入、缺失文件、非法 URL 和未知日期。原始医学资料不要提交到仓库。
 
+完成记录：文件=`backend/app/knowledge.py`、`backend/app/cli/import_documents.py`、`backend/app/cli/fetch_sources.py`、`data/examples/`、`data/sources.json`；验证=样例首次 2 success/1 failed、再次 2 skipped/1 failed，均退出 1；NCI 五篇首次 5 success、再次 5 skipped；UTF-8 错误行、非法 URL、缺失文件、未知日期均有测试；备注=原始正文仅存 Git 忽略的 data/raw/，虚构验收记录已清理。
+
 ### 12｜审核、发布和撤回资料
 
-- [ ] 实现资料状态命令，并确保只有 `published` 内容可进入检索。
+- [x] 实现资料状态命令，并确保只有 `published` 内容可进入检索。
 
 命令：
 
@@ -201,9 +205,11 @@ docker compose run --rm backend python -m app.cli.documents expire <document-id>
 
 > 完成 TODO 任务 12。实现 publish、withdraw、expire 命令及状态转换规则。发布时校验必填来源信息；撤回和过期时创建索引清理任务。用测试证明查询层始终以 MySQL 当前状态为准。
 
+完成记录：文件=`backend/app/cli/documents.py`、`backend/app/knowledge.py`、`backend/tests/test_publication.py`、`backend/tests/test_mysql_integration.py`；验证=五篇 NCI 资料已发布；测试证明 pending、撤回、过期和旧版本不进入 SQL 证据结果，删除任务未处理时仍过滤；备注=第二阶段完成检索前 SQL 核验层，Qdrant 切分/写入/检索与工作器按第三阶段实现。
+
 ### 13｜建立首批评测题
 
-- [ ] 创建 `evals/questions.jsonl` 和 `docs/evaluation-format.md`。
+- [x] 创建 `evals/questions.jsonl` 和 `docs/evaluation-format.md`。
 
 先写 20 题：8 题概念或术语、4 题比较、3 题多轮追问、3 题资料无答案、2 题个体化治疗请求。每题必须有 `id`、`question`、`expected_source_ids`、`required_points`、`forbidden_points`、`expected_behavior`。多轮题额外包含 `history`。
 
@@ -212,6 +218,8 @@ docker compose run --rm backend python -m app.cli.documents expire <document-id>
 交给编程助手：
 
 > 完成 TODO 任务 13。定义评测 JSONL 格式、Pydantic 校验模型和 validate_evals 命令。先根据已发布资料创建 20 道有明确判断条件的题；如果资料不足，创建结构和示例，并在题目位置写 TODO_MISSING_SOURCE，校验命令要把它报告为未就绪。
+
+完成记录：文件=`evals/questions.jsonl`、`backend/app/evaluation.py`、`backend/app/cli/validate_evals.py`、`docs/evaluation-format.md`；验证=20 题、15 dev/5 test，资料 pending 时 ready=false，五篇发布后 ready=true；容器内全套测试 34 passed（启用真实 MySQL 集成测试）；备注=保留 1 条上游 TestClient 弃用警告；评测格式与来源验证不等于医学专家审核。
 
 ## 第三阶段：跑通带引用的最小 RAG
 

@@ -1,13 +1,13 @@
 # Imm-Agent 跨平台开发工作流
 
-本文将 Windows、macOS（仅 Apple Silicon / ARM64）和 Linux 的首次安装分开说明，Docker 就绪后共用项目构建、启动、测试和日常开发流程。目前只有 Windows 11 流程已经实际验证；macOS 与 Linux 步骤依据官方安装文档整理，仍需在对应设备上完成本文检查表。
+本文将 Windows、macOS（仅 Apple Silicon / ARM64）和 Linux 的首次安装分开说明，Docker 就绪后共用项目构建、启动、测试和日常开发流程。Windows 11 流程已验证；2026-10-02 在 macOS 15.4.1 / Apple Silicon 完成 Docker 安装、ARM64 镜像构建、四服务健康检查、前端 build/lint 和第二阶段后端测试。Linux 仍待实测。
 
 项目运行时全部位于容器中：后端使用 Python 3.10 镜像，后续前端使用 Node.js 22 镜像，数据服务使用 MySQL 与 Qdrant 镜像。三个平台都不需要在宿主机为本项目安装 Python、Node.js、MySQL、Qdrant、pip 或 npm。代码仍在宿主机 IDE 中编辑，依赖安装、运行和测试由容器完成。
 
 | 平台 | 宿主机准备 | 本文使用的终端 | 验证状态 |
 | --- | --- | --- | --- |
 | Windows 11 | Git、WSL 2、Docker Desktop（Linux 容器） | PowerShell | 已实测 |
-| macOS Apple Silicon | Git、Apple Silicon 版 Docker Desktop | Terminal（zsh） | 待实测 |
+| macOS Apple Silicon | Git、Apple Silicon 版 Docker Desktop | Terminal（zsh） | 已实测（2026-10-02） |
 | Linux | Git、Docker Engine、Buildx 与 Compose 插件；接口检查使用 curl | Bash | 待实测 |
 
 ## 1. 当前已验证的版本
@@ -23,7 +23,7 @@
 | Qdrant | `qdrant/qdrant:v1.15.5` | Docker 镜像 |
 | 前端 | `node:22` | Docker 镜像 |
 
-版本表用于说明 Windows 上已验证的组合，不代表 macOS/Linux 已完成验证。Docker CLI 版本不等于 Docker Desktop 应用版本。更新任一镜像版本后，必须重新构建、运行测试并在 `REVIEW.md` 记录结果。
+版本表中的 Docker CLI/Compose 与镜像组合已在 Windows 和 macOS Apple Silicon 验证；本次 Mac 使用 Docker Desktop 4.93.0。Linux 仍待验证。Docker CLI 版本不等于 Docker Desktop 应用版本。更新任一镜像版本后，必须重新构建、运行测试并在 `REVIEW.md` 记录结果。
 
 ## 2. 新电脑首次安装：按平台选择
 
@@ -244,7 +244,9 @@ curl --fail --silent --show-error http://127.0.0.1:8000/ready
 docker compose run --rm backend python -m pytest
 ```
 
-通过条件：当前版本输出 `3 passed`。测试临时容器会在结束后由 `--rm` 删除。
+通过条件：当前第二阶段默认测试输出 `33 passed, 1 skipped`；迁移后增加 `-e IMM_AGENT_TEST_MYSQL=1` 运行全部测试应为 `34 passed`。默认跳过的是真实 MySQL 集成测试。测试临时容器会在结束后由 `--rm` 删除。
+
+第二阶段迁移、导入、资料发布和评测题验收见 [知识库工作流](stage-two-workflow.md)。
 
 ## 4. 每天开始和结束开发：通用流程
 

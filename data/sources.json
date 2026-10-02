@@ -1,0 +1,72 @@
+[
+  {
+    "slug": "nci-immunotherapy",
+    "document_id": "ea12a680-ac69-5485-91d4-7e842a9519c8",
+    "title": "Immunotherapy to Treat Cancer",
+    "organization": "National Cancer Institute (NCI), NIH",
+    "source_url": "https://www.cancer.gov/about-cancer/treatment/types/immunotherapy",
+    "language": "en",
+    "published_at": null,
+    "page_dates": {
+      "updated": "2019-09-24"
+    },
+    "reuse_policy": "https://www.cancer.gov/policies/copyright-reuse",
+    "acquisition": "fetch_sources allowlist"
+  },
+  {
+    "slug": "nci-checkpoint-inhibitors",
+    "document_id": "052681c9-8a2f-5b0d-9719-84117a6516d0",
+    "title": "Immune Checkpoint Inhibitors",
+    "organization": "National Cancer Institute (NCI), NIH",
+    "source_url": "https://www.cancer.gov/about-cancer/treatment/types/immunotherapy/checkpoint-inhibitors",
+    "language": "en",
+    "published_at": null,
+    "page_dates": {
+      "reviewed": "2022-04-07"
+    },
+    "reuse_policy": "https://www.cancer.gov/policies/copyright-reuse",
+    "acquisition": "fetch_sources allowlist"
+  },
+  {
+    "slug": "nci-t-cell-transfer",
+    "document_id": "1b1ca196-5907-54e8-a953-11af8a5a2965",
+    "title": "T-cell Transfer Therapy",
+    "organization": "National Cancer Institute (NCI), NIH",
+    "source_url": "https://www.cancer.gov/about-cancer/treatment/types/immunotherapy/t-cell-transfer-therapy",
+    "language": "en",
+    "published_at": null,
+    "page_dates": {
+      "updated": "2024-08-05"
+    },
+    "reuse_policy": "https://www.cancer.gov/policies/copyright-reuse",
+    "acquisition": "fetch_sources allowlist"
+  },
+  {
+    "slug": "nci-monoclonal-antibodies",
+    "document_id": "e6d89414-330a-5816-8aad-79a5e5940ec3",
+    "title": "Monoclonal Antibodies",
+    "organization": "National Cancer Institute (NCI), NIH",
+    "source_url": "https://www.cancer.gov/about-cancer/treatment/types/immunotherapy/monoclonal-antibodies",
+    "language": "en",
+    "published_at": "2019-09-24",
+    "page_dates": {
+      "posted": "2019-09-24"
+    },
+    "reuse_policy": "https://www.cancer.gov/policies/copyright-reuse",
+    "acquisition": "fetch_sources allowlist"
+  },
+  {
+    "slug": "nci-treatment-vaccines",
+    "document_id": "7a87ff27-304f-5b53-ac42-f79be6e81b4f",
+    "title": "Cancer Treatment Vaccines",
+    "organization": "National Cancer Institute (NCI), NIH",
+    "source_url": "https://www.cancer.gov/about-cancer/treatment/types/immunotherapy/cancer-treatment-vaccines",
+    "language": "en",
+    "published_at": "2019-09-24",
+    "page_dates": {
+      "posted": "2019-09-24"
+    },
+    "reuse_policy": "https://www.cancer.gov/policies/copyright-reuse",
+    "acquisition": "fetch_sources allowlist"
+  }
+]
