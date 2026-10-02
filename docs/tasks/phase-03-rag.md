@@ -53,7 +53,7 @@ docker compose run --rm backend python -m app.cli.reindex --document <document-i
 
 ### 22｜接入大模型并生成结构化答案
 
-- [ ] 建立可替换的模型适配层，并让回答只依据本次检索片段。
+- [x] 建立可替换的模型适配层，并让回答只依据本次检索片段。
 
 内部响应格式：
 
@@ -76,6 +76,8 @@ docker compose run --rm backend python -m app.cli.reindex --document <document-i
 交给编程助手：
 
 > 完成 TODO 任务 22。创建模型 Provider 接口、一个由环境变量配置的实现、版本化提示词和 Pydantic 响应模型。回答仅能使用传入片段，严格校验引用 ID。测试用假 Provider 覆盖卡片列出的 6 种情况，不在测试中调用真实模型。
+
+验收记录（2026-10-02）：实现 OpenAI 兼容模型适配器、版本化分流与回答提示词、严格响应模型、引用 ID 限定和一次超时重试。检索为空直接返回 `insufficient`。假模型覆盖正常回答、空证据、虚构引用、格式错误、超时和来源冲突。真实配置北京地域百炼 `qwen-plus`，运行 `python -m app.cli.ask '什么是癌症免疫疗法？'` 返回带 3 条可解析 NCI 来源的结构化答案；紧急症状示例返回 `emergency`，未附带科普结论或来源。后端本地测试 73 passed、2 skipped；目录检查通过。引用内容对 claim 的事实支持需要后续逐条人工评测，结构校验无法自动证明。
 
 <a id="task-23"></a>
 

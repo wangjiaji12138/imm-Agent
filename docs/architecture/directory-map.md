@@ -25,10 +25,10 @@
 | [backend/app/modules/retrieval/chunking.py](../../backend/app/modules/retrieval/chunking.py) | 现有实现 | 20 / 21 | 按标题/段落/句子切分并保留 Unicode 字符区间 |
 | [backend/app/modules/retrieval/indexing.py](../../backend/app/modules/retrieval/indexing.py) | 现有实现 | 20 / 21 | 全量/单文档索引与删除任务处理、幂等和过时任务丢弃 |
 | [backend/app/modules/retrieval/service.py](../../backend/app/modules/retrieval/service.py) | 现有实现 | 20 / 21 | search_knowledge；候选召回后通过 knowledge 证据核验 |
-| [backend/app/modules/answering/schemas.py](../../backend/app/modules/answering/schemas.py) | 待实现占位 | 22 | 六类 result_type 与 evidence_status 的响应约束 |
-| [backend/app/modules/answering/ports.py](../../backend/app/modules/answering/ports.py) | 待实现占位 | 22 | 模型 Provider 输入输出及超时错误接口 |
-| [backend/app/modules/answering/service.py](../../backend/app/modules/answering/service.py) | 待实现占位 | 22 | 空证据短路、最多一次超时重试、结构化生成 |
-| [backend/app/modules/answering/citations.py](../../backend/app/modules/answering/citations.py) | 待实现占位 | 22 | 引用 ID 必须来自本次 Evidence，校验关键结论引用覆盖 |
+| [backend/app/modules/answering/schemas.py](../../backend/app/modules/answering/schemas.py) | 现有实现 | 22 | 六类 result_type 与 evidence_status 的响应约束 |
+| [backend/app/modules/answering/ports.py](../../backend/app/modules/answering/ports.py) | 现有实现 | 22 | 模型 Provider 输入输出及用量接口 |
+| [backend/app/modules/answering/service.py](../../backend/app/modules/answering/service.py) | 现有实现 | 22 | 预检分流、空证据短路、一次超时重试、结构化生成 |
+| [backend/app/modules/answering/citations.py](../../backend/app/modules/answering/citations.py) | 现有实现 | 22 | 引用 ID 必须来自本次 Evidence；claim 事实支持待人工评测 |
 | [backend/app/modules/agent/state.py](../../backend/app/modules/agent/state.py) | 待实现占位 | 22 / 23 / 31 / 41 | 当前问题、已确认上下文、证据和阶段结果 |
 | [backend/app/modules/agent/policy.py](../../backend/app/modules/agent/policy.py) | 待实现占位 | 22 / 23 / 31 / 41 | 按 mvp-scope 对 emergency/refuse/out_of_scope/clarify 分流 |
 | [backend/app/modules/agent/workflow.py](../../backend/app/modules/agent/workflow.py) | 待实现占位 | 22 / 23 / 31 / 41 | 先分流，再检索，再生成，再校验；故障走接口错误 |
@@ -62,9 +62,9 @@
 | [backend/app/infrastructure/readiness.py](../../backend/app/infrastructure/readiness.py) | 现有实现 | 10 / 20 / 22 / 42 / ARCH-02 | MySQL 与 Qdrant 连通性检查 |
 | [backend/app/infrastructure/embedding.py](../../backend/app/infrastructure/embedding.py) | 现有实现 | 10 / 20 / 22 / 42 / ARCH-02 | 实现 retrieval.ports 的 embedding 接口 |
 | [backend/app/infrastructure/vector_store.py](../../backend/app/infrastructure/vector_store.py) | 现有实现 | 10 / 20 / 22 / 42 / ARCH-02 | 实现 retrieval.ports 的 Qdrant 接口 |
-| [backend/app/infrastructure/llm.py](../../backend/app/infrastructure/llm.py) | 待实现占位 | 10 / 20 / 22 / 42 / ARCH-02 | 实现 answering.ports 的模型接口，封装供应商 SDK |
+| [backend/app/infrastructure/llm.py](../../backend/app/infrastructure/llm.py) | 现有实现 | 10 / 20 / 22 / 42 / ARCH-02 | 实现 OpenAI 兼容的 answering.ports 模型接口 |
 | [backend/app/cli/reindex.py](../../backend/app/cli/reindex.py) | 现有实现 | 20 | 全量/单文档重建与索引任务处理 |
-| [backend/app/cli/ask.py](../../backend/app/cli/ask.py) | 待实现占位 | 22 | 命令行运行科普问答 |
+| [backend/app/cli/ask.py](../../backend/app/cli/ask.py) | 现有实现 | 22 | 命令行运行科普问答及来源 |
 | [backend/app/cli/evaluate_retrieval.py](../../backend/app/cli/evaluate_retrieval.py) | 现有实现 | 21 | 生成固定题集检索基线 |
 | [backend/app/cli/evaluate_answers.py](../../backend/app/cli/evaluate_answers.py) | 待实现占位 | 40 | 运行固定配置下的独立评测 |
 | [backend/app/cli/backup.py](../../backend/app/cli/backup.py) | 待实现占位 | 42 | 导出 MySQL 与原始资料、版本清单、SHA-256；不打包密钥 |
@@ -78,7 +78,8 @@
 | [frontend/src/shared/api/client.ts](../../frontend/src/shared/api/client.ts) | 待实现占位 | 23 / 30 / 31 / 32 | 统一 fetch、超时、request_id 和错误转换 |
 | [frontend/src/shared/api/generated.ts](../../frontend/src/shared/api/generated.ts) | 待实现占位 | 23 / 30 / 31 / 32 | 从后端 OpenAPI 生成的类型落点，当前并非已生成契约 |
 | [frontend/src/shared/ui/RequestState.tsx](../../frontend/src/shared/ui/RequestState.tsx) | 待实现占位 | 30 | 被多个 feature 使用的加载与请求错误提示，不放医疗业务判断 |
-| [backend/app/modules/answering/prompts/v1.md](../../backend/app/modules/answering/prompts/v1.md) | 待实现占位 | 22 | 版本化提示词占位，不能用于生成 |
+| [backend/app/modules/answering/prompts/v1.md](../../backend/app/modules/answering/prompts/v1.md) | 现有实现 | 22 | 版本化证据回答提示词 |
+| [backend/app/modules/answering/prompts/routing-v1.md](../../backend/app/modules/answering/prompts/routing-v1.md) | 现有实现 | 22 | 版本化请求分流提示词 |
 | [deploy/compose.production.yaml.example](../../deploy/compose.production.yaml.example) | 待实现占位 | 42 | 生产部署配置示例占位，当前不可运行 |
 | [.github/workflows/ci.yml.example](../../.github/workflows/ci.yml.example) | 待实现占位 | 41 / 42 | CI 设计占位，不自动执行 |
 | [docs/mvp-scope.md](../../docs/mvp-scope.md) | 现有实现 | 01 | 现有首版范围与业务分类的唯一规则 |

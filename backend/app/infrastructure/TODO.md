@@ -8,7 +8,7 @@
 | [orm.py](orm.py) | 全项目唯一 DeclarativeBase；模型在 Alembic 入口显式注册 |
 | [readiness.py](readiness.py) | 现有 MySQL/Qdrant 连通性检查迁入 |
 | [embedding.py](embedding.py) | 已实现 OpenAI 兼容 Embedding API 适配 |
-| [vector_store.py](vector_store.py) | 已实现 Qdrant 写入/删除适配；在线检索待任务 21 |
-| [llm.py](llm.py) | 实现 answering.ports 的模型接口，封装供应商 SDK |
+| [vector_store.py](vector_store.py) | 已实现 Qdrant 写入、删除和在线检索适配 |
+| [llm.py](llm.py) | 已实现 OpenAI 兼容聊天模型接口 |
 
-实现顺序与禁止依赖见 [模块边界](../../../docs/architecture/boundaries.md)。database.py、orm.py、readiness.py、Embedding 和向量写入适配已实现；生成模型适配仍为占位。
+实现顺序与禁止依赖见 [模块边界](../../../docs/architecture/boundaries.md)。

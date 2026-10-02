@@ -9,7 +9,7 @@ CLI 负责参数、依赖装配、逐行结果和退出码；业务规则放到�
 | validate_evals.py | 已实现 | [13](../../../docs/tasks/phase-02-knowledge.md#task-13)；题集格式与来源就绪 |
 | reindex.py | 已实现 | [20](../../../docs/tasks/phase-03-rag.md#task-20)；全量/单文档重建及删除任务处理 |
 | evaluate_retrieval.py | 已实现 | [21](../../../docs/tasks/phase-03-rag.md#task-21)；固定题集基线 |
-| ask.py | 占位，执行会失败 | [22](../../../docs/tasks/phase-03-rag.md#task-22)；命令行科普回答 |
+| ask.py | 已实现 | [22](../../../docs/tasks/phase-03-rag.md#task-22)；命令行科普回答及来源 |
 | evaluate_answers.py | 占位，执行会失败 | [40](../../../docs/tasks/phase-05-release.md#task-40)；独立评测 |
 | backup.py / restore.py | 占位，执行会失败 | [42](../../../docs/tasks/phase-05-release.md#task-42)；数据版本、导出/恢复与完整性校验 |
 

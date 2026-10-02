@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     embedding_api_key: str = ""
     embedding_dimension: int = Field(default=1536, ge=1)
     embedding_batch_size: int = Field(default=10, ge=1, le=100)
+    model_provider: str = "openai-compatible"
+    model_url: str = ""
+    model_name: str = ""
+    model_api_key: str = ""
+    model_timeout_seconds: float = Field(default=30.0, gt=0, le=120)
 
 
 @lru_cache

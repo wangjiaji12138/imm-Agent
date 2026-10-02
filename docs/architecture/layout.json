@@ -203,7 +203,7 @@
     },
     {
       "path": "backend/app/modules/answering/schemas.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "22"
       ],
@@ -211,7 +211,7 @@
     },
     {
       "path": "backend/app/modules/answering/ports.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "22"
       ],
@@ -219,7 +219,7 @@
     },
     {
       "path": "backend/app/modules/answering/service.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "22"
       ],
@@ -227,7 +227,7 @@
     },
     {
       "path": "backend/app/modules/answering/citations.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "22"
       ],
@@ -587,7 +587,7 @@
     },
     {
       "path": "backend/app/infrastructure/llm.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "10",
         "20",
@@ -607,7 +607,7 @@
     },
     {
       "path": "backend/app/cli/ask.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "22"
       ],
@@ -725,11 +725,19 @@
     },
     {
       "path": "backend/app/modules/answering/prompts/v1.md",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "22"
       ],
-      "purpose": "版本化提示词占位，不能用于生成"
+      "purpose": "版本化证据回答提示词"
+    },
+    {
+      "path": "backend/app/modules/answering/prompts/routing-v1.md",
+      "status": "implemented",
+      "tasks": [
+        "22"
+      ],
+      "purpose": "版本化请求分流提示词"
     },
     {
       "path": "deploy/compose.production.yaml.example",
