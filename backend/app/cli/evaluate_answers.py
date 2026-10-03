@@ -32,12 +32,20 @@ def run(questions_path: Path, output_dir: Path) -> Path:
     runtime = get_chat_runtime()
     rows = []
     for question in held_out:
-        history = [HistoryTurn(question=turn.content, answer="") for turn in []]
+        history = []
         for index in range(0, len(question.history) - 1, 2):
             pair = question.history[index:index + 2]
             if pair[0].role == "user" and pair[1].role == "assistant":
                 history.append(HistoryTurn(question=pair[0].content, answer=pair[1].content))
         searched = []
+        usage = {"input_tokens": 0, "output_tokens": 0}
+
+        class MeteredProvider:
+            def complete(self, system, user):
+                output = runtime.provider.complete(system, user)
+                usage["input_tokens"] += output.input_tokens or 0
+                usage["output_tokens"] += output.output_tokens or 0
+                return output
 
         def search(query):
             result = runtime.search(query)
@@ -48,7 +56,7 @@ def run(questions_path: Path, output_dir: Path) -> Path:
         row = {"id": question.id, "category": question.category,
                "expected_behavior": question.expected_behavior, "expected_source_ids": [str(x) for x in question.expected_source_ids]}
         try:
-            result = run_question(question.question, runtime.provider, search, history)
+            result = run_question(question.question, MeteredProvider(), search, history)
             cited = [item.chunk_id for item in result.answer.citations]
             with get_session() as session:
                 resolved = {item: get_source_details(session, item) for item in cited}
@@ -57,11 +65,14 @@ def run(questions_path: Path, output_dir: Path) -> Path:
                        cited_resolved=sum(value is not None for value in resolved.values()),
                        cited_total=len(cited), top_5_document_ids=[item.document_id for item in searched[:5]],
                        has_unsourced_key_claim=result.answer.result_type == "answer" and not cited,
-                       withdrew_hit=any(value is None for value in resolved.values()))
+                       withdrew_hit=any(value is None for value in resolved.values()),
+                       input_tokens=usage["input_tokens"], output_tokens=usage["output_tokens"])
         except Exception as exc:
             row.update(success=False, error_type=type(exc).__name__, actual_behavior=None,
                        cited_resolved=0, cited_total=0, top_5_document_ids=[],
                        has_unsourced_key_claim=False, withdrew_hit=False)
+        row["estimated_model_cost_cny"] = round((usage["input_tokens"] * 0.8 +
+                                                  usage["output_tokens"] * 2) / 1_000_000, 6)
         row["elapsed_ms"] = round((perf_counter() - started) * 1000, 2)
         expected = set(row["expected_source_ids"])
         row["recall_at_5"] = len(expected.intersection(row["top_5_document_ids"])) / len(expected) if expected else None
@@ -80,7 +91,8 @@ def run(questions_path: Path, output_dir: Path) -> Path:
                     "insufficient_behavior_rate": sum(row["behavior_correct"] for row in unanswerable) / len(unanswerable) if unanswerable else None,
                     "request_success_rate": sum(row["success"] for row in rows) / len(rows) if rows else None,
                     "p95_latency_ms": percentile_95([row["elapsed_ms"] for row in rows]),
-                    "estimated_cost_per_request_cny": None,
+                    "estimated_cost_per_request_cny": round(mean(row["estimated_model_cost_cny"] for row in rows), 6) if rows else None,
+                    "cost_note": "qwen-plus 北京区 0.8/2 元每百万输入/输出 token；不含 Embedding 查询、免费额度或缓存优惠",
                     "withdrawn_hits": sum(row["withdrew_hit"] for row in rows),
                     "unsourced_key_claims": sum(row["has_unsourced_key_claim"] for row in rows)},
         "questions": rows,

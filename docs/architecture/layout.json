@@ -268,7 +268,7 @@
     },
     {
       "path": "backend/app/modules/conversations/schemas.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "31",
         "41"
@@ -277,7 +277,7 @@
     },
     {
       "path": "backend/app/modules/conversations/models.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "31",
         "41"
@@ -286,7 +286,7 @@
     },
     {
       "path": "backend/app/modules/conversations/repository.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "31",
         "41"
@@ -295,7 +295,7 @@
     },
     {
       "path": "backend/app/modules/conversations/service.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "31",
         "41"
@@ -304,7 +304,7 @@
     },
     {
       "path": "backend/app/modules/feedback/schemas.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "32",
         "41"
@@ -313,7 +313,7 @@
     },
     {
       "path": "backend/app/modules/feedback/models.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "32",
         "41"
@@ -322,7 +322,7 @@
     },
     {
       "path": "backend/app/modules/feedback/repository.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "32",
         "41"
@@ -331,7 +331,7 @@
     },
     {
       "path": "backend/app/modules/feedback/service.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "32",
         "41"
@@ -483,7 +483,7 @@
     },
     {
       "path": "backend/app/api/routes/feedback.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "23",
         "32",
@@ -623,7 +623,7 @@
     },
     {
       "path": "backend/app/cli/evaluate_answers.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "40"
       ],
@@ -631,7 +631,7 @@
     },
     {
       "path": "backend/app/cli/backup.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "42"
       ],
@@ -639,7 +639,7 @@
     },
     {
       "path": "backend/app/cli/restore.py",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "42"
       ],
@@ -647,7 +647,7 @@
     },
     {
       "path": "frontend/src/features/chat/ChatPanel.tsx",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "30"
       ],
@@ -655,7 +655,7 @@
     },
     {
       "path": "frontend/src/features/chat/useChat.ts",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "30"
       ],
@@ -663,7 +663,7 @@
     },
     {
       "path": "frontend/src/features/sources/SourceCard.tsx",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "30"
       ],
@@ -687,7 +687,7 @@
     },
     {
       "path": "frontend/src/features/feedback/FeedbackForm.tsx",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "32"
       ],
@@ -695,7 +695,7 @@
     },
     {
       "path": "frontend/src/shared/api/client.ts",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "23",
         "30",
@@ -706,7 +706,7 @@
     },
     {
       "path": "frontend/src/shared/api/generated.ts",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "23",
         "30",
@@ -741,7 +741,7 @@
     },
     {
       "path": "deploy/compose.production.yaml.example",
-      "status": "planned",
+      "status": "implemented",
       "tasks": [
         "42"
       ],

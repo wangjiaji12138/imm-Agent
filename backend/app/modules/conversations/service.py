@@ -3,12 +3,12 @@
 import hashlib
 import hmac
 import secrets
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session
 
 from app.modules.conversations.models import Conversation
-from app.modules.conversations.repository import append_message, get_conversation, owns_request as query_owns_request, recent_messages
+from app.modules.conversations.repository import append_message, delete_older_than, get_conversation, owns_request as query_owns_request, recent_messages
 from app.modules.conversations.schemas import HistoryTurn
 
 
@@ -48,3 +48,9 @@ def record(session: Session, conversation: Conversation, question: str, answer: 
 
 def owns_request(session: Session, conversation_id: str, request_id: str) -> bool:
     return query_owns_request(session, conversation_id, request_id)
+
+
+def prune(session: Session, days: int = 30) -> int:
+    if not 1 <= days <= 3650:
+        raise ValueError("保留期限无效")
+    return delete_older_than(session, datetime.utcnow() - timedelta(days=days))

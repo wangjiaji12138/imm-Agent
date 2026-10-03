@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     model_name: str = ""
     model_api_key: str = ""
     model_timeout_seconds: float = Field(default=30.0, gt=0, le=120)
+    rate_limit_per_minute: int = Field(default=30, ge=1, le=10000)
 
 
 @lru_cache

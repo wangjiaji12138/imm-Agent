@@ -59,7 +59,7 @@ def allowed(source, target):
             return len(parts) >= 4 and parts[3] in (
                 'service', 'schemas', 'evidence', 'dataset', 'acquisition', 'workflow')
         return any(within(target, prefix) for prefix in (
-            'app.core', 'app.infrastructure', 'app.api', 'fastapi', 'pydantic',
+            'app.core', 'app.infrastructure', 'app.api', 'app.cli.backup', 'fastapi', 'pydantic',
             'httpx', 'sqlalchemy.exc', 'sqlalchemy.orm.Session'))
     return False
 

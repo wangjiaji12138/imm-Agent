@@ -32,14 +32,14 @@
 | [backend/app/modules/agent/state.py](../../backend/app/modules/agent/state.py) | 现有实现 | 22 / 23 / 31 / 41 | 单轮回答和证据结果；会话状态待任务 31 |
 | [backend/app/modules/agent/policy.py](../../backend/app/modules/agent/policy.py) | 待实现占位 | 22 / 23 / 31 / 41 | 按 mvp-scope 对 emergency/refuse/out_of_scope/clarify 分流 |
 | [backend/app/modules/agent/workflow.py](../../backend/app/modules/agent/workflow.py) | 现有实现 | 22 / 23 / 31 / 41 | 先分流，再检索，再生成；故障走接口错误 |
-| [backend/app/modules/conversations/schemas.py](../../backend/app/modules/conversations/schemas.py) | 待实现占位 | 31 / 41 | 会话引用、凭据校验后上下文和消息 DTO |
-| [backend/app/modules/conversations/models.py](../../backend/app/modules/conversations/models.py) | 待实现占位 | 31 / 41 | 会话/消息表，新增 Alembic 迁移注册 |
-| [backend/app/modules/conversations/repository.py](../../backend/app/modules/conversations/repository.py) | 待实现占位 | 31 / 41 | 会话隔离条件和消息读写 |
-| [backend/app/modules/conversations/service.py](../../backend/app/modules/conversations/service.py) | 待实现占位 | 31 / 41 | 新建会话、认证上下文、追加消息和历史裁剪 |
-| [backend/app/modules/feedback/schemas.py](../../backend/app/modules/feedback/schemas.py) | 待实现占位 | 32 / 41 | helpful/not_helpful 与最多 500 字备注 |
-| [backend/app/modules/feedback/models.py](../../backend/app/modules/feedback/models.py) | 待实现占位 | 32 / 41 | 反馈表与同会话同回答唯一约束 |
-| [backend/app/modules/feedback/repository.py](../../backend/app/modules/feedback/repository.py) | 待实现占位 | 32 / 41 | 反馈幂等创建或更新 |
-| [backend/app/modules/feedback/service.py](../../backend/app/modules/feedback/service.py) | 待实现占位 | 32 / 41 | 归属验证、输入限制和重复提交更新 |
+| [backend/app/modules/conversations/schemas.py](../../backend/app/modules/conversations/schemas.py) | 已实现 | 31 / 41 | 会话引用、凭据校验后上下文和消息 DTO |
+| [backend/app/modules/conversations/models.py](../../backend/app/modules/conversations/models.py) | 已实现 | 31 / 41 | 会话/消息表，新增 Alembic 迁移注册 |
+| [backend/app/modules/conversations/repository.py](../../backend/app/modules/conversations/repository.py) | 已实现 | 31 / 41 | 会话隔离条件和消息读写 |
+| [backend/app/modules/conversations/service.py](../../backend/app/modules/conversations/service.py) | 已实现 | 31 / 41 | 新建会话、认证上下文、追加消息和历史裁剪 |
+| [backend/app/modules/feedback/schemas.py](../../backend/app/modules/feedback/schemas.py) | 已实现 | 32 / 41 | helpful/not_helpful 与最多 500 字备注 |
+| [backend/app/modules/feedback/models.py](../../backend/app/modules/feedback/models.py) | 已实现 | 32 / 41 | 反馈表与同会话同回答唯一约束 |
+| [backend/app/modules/feedback/repository.py](../../backend/app/modules/feedback/repository.py) | 已实现 | 32 / 41 | 反馈幂等创建或更新 |
+| [backend/app/modules/feedback/service.py](../../backend/app/modules/feedback/service.py) | 已实现 | 32 / 41 | 归属验证、输入限制和重复提交更新 |
 | [backend/app/modules/evaluation/schemas.py](../../backend/app/modules/evaluation/schemas.py) | 现有实现 | 13 / 21 / 40 / ARCH-02 | EvaluationQuestion 与 Turn 格式、分类及分组约束 |
 | [backend/app/modules/evaluation/dataset.py](../../backend/app/modules/evaluation/dataset.py) | 现有实现 | 13 / 21 / 40 / ARCH-02 | 读取 JSONL、验证 ID/分组/已发布来源 |
 | [backend/app/modules/evaluation/retrieval.py](../../backend/app/modules/evaluation/retrieval.py) | 现有实现 | 13 / 21 / 40 / ARCH-02 | 检索基线、Top 5、Recall@5 和耗时 |
@@ -53,7 +53,7 @@
 | [backend/app/api/routes/health.py](../../backend/app/api/routes/health.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | /health 与 /ready 路由，保持响应及依赖覆盖能力 |
 | [backend/app/api/routes/chat.py](../../backend/app/api/routes/chat.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | POST /api/chat，调用注入的工作流 |
 | [backend/app/api/routes/sources.py](../../backend/app/api/routes/sources.py) | 现有实现 | 23 / 32 / 42 / ARCH-02 | GET /api/sources/{chunk_id}，调用实时证据核验 |
-| [backend/app/api/routes/feedback.py](../../backend/app/api/routes/feedback.py) | 待实现占位 | 23 / 32 / 42 / ARCH-02 | POST /api/feedback，校验会话和回答归属 |
+| [backend/app/api/routes/feedback.py](../../backend/app/api/routes/feedback.py) | 已实现 | 23 / 32 / 42 / ARCH-02 | POST /api/feedback，校验会话和回答归属 |
 | [backend/app/core/settings.py](../../backend/app/core/settings.py) | 现有实现 | 02 / 41 / 42 / ARCH-02 | 环境变量配置与 get_settings 缓存 |
 | [backend/app/core/errors.py](../../backend/app/core/errors.py) | 现有实现 | 02 / 41 / 42 / ARCH-02 | 依赖超时错误类型，不依赖 HTTP 或厂商 SDK |
 | [backend/app/core/logging.py](../../backend/app/core/logging.py) | 待实现占位 | 02 / 41 / 42 / ARCH-02 | 结构化白名单日志，排除问题全文、凭据和反馈备注 |
@@ -66,21 +66,21 @@
 | [backend/app/cli/reindex.py](../../backend/app/cli/reindex.py) | 现有实现 | 20 | 全量/单文档重建与索引任务处理 |
 | [backend/app/cli/ask.py](../../backend/app/cli/ask.py) | 现有实现 | 22 | 命令行运行科普问答及来源 |
 | [backend/app/cli/evaluate_retrieval.py](../../backend/app/cli/evaluate_retrieval.py) | 现有实现 | 21 | 生成固定题集检索基线 |
-| [backend/app/cli/evaluate_answers.py](../../backend/app/cli/evaluate_answers.py) | 待实现占位 | 40 | 运行固定配置下的独立评测 |
-| [backend/app/cli/backup.py](../../backend/app/cli/backup.py) | 待实现占位 | 42 | 导出 MySQL 与原始资料、版本清单、SHA-256；不打包密钥 |
-| [backend/app/cli/restore.py](../../backend/app/cli/restore.py) | 待实现占位 | 42 | 校验备份并恢复到显式指定的空测试库，拒绝默认覆盖现有库 |
-| [frontend/src/features/chat/ChatPanel.tsx](../../frontend/src/features/chat/ChatPanel.tsx) | 待实现占位 | 30 | 问题与回答列表、加载/错误/证据不足状态 |
-| [frontend/src/features/chat/useChat.ts](../../frontend/src/features/chat/useChat.ts) | 待实现占位 | 30 | 发送、取消、重复提交限制与失败后保留草稿 |
-| [frontend/src/features/sources/SourceCard.tsx](../../frontend/src/features/sources/SourceCard.tsx) | 待实现占位 | 30 | 机构、标题、日期、支持结论及原文展开 |
+| [backend/app/cli/evaluate_answers.py](../../backend/app/cli/evaluate_answers.py) | 已实现 | 40 | 运行固定配置下的独立评测 |
+| [backend/app/cli/backup.py](../../backend/app/cli/backup.py) | 已实现 | 42 | 导出 MySQL 与原始资料、版本清单、SHA-256；不打包密钥 |
+| [backend/app/cli/restore.py](../../backend/app/cli/restore.py) | 已实现 | 42 | 校验备份并恢复到显式指定的空测试库，拒绝默认覆盖现有库 |
+| [frontend/src/features/chat/ChatPanel.tsx](../../frontend/src/features/chat/ChatPanel.tsx) | 已实现 | 30 | 问题与回答列表、加载/错误/证据不足状态 |
+| [frontend/src/features/chat/useChat.ts](../../frontend/src/features/chat/useChat.ts) | 已实现 | 30 | 发送、取消、重复提交限制与失败后保留草稿 |
+| [frontend/src/features/sources/SourceCard.tsx](../../frontend/src/features/sources/SourceCard.tsx) | 已实现 | 30 | 机构、标题、日期、支持结论及原文展开 |
 | [frontend/src/features/conversations/ConversationList.tsx](../../frontend/src/features/conversations/ConversationList.tsx) | 待实现占位 | 31 | 当前会话与新建会话入口 |
 | [frontend/src/features/conversations/useConversation.ts](../../frontend/src/features/conversations/useConversation.ts) | 待实现占位 | 31 | 会话凭据生命周期与历史请求隔离 |
-| [frontend/src/features/feedback/FeedbackForm.tsx](../../frontend/src/features/feedback/FeedbackForm.tsx) | 待实现占位 | 32 | 反馈提交、更新、备注长度和错误提示 |
-| [frontend/src/shared/api/client.ts](../../frontend/src/shared/api/client.ts) | 待实现占位 | 23 / 30 / 31 / 32 | 统一 fetch、超时、request_id 和错误转换 |
-| [frontend/src/shared/api/generated.ts](../../frontend/src/shared/api/generated.ts) | 待实现占位 | 23 / 30 / 31 / 32 | 从后端 OpenAPI 生成的类型落点，当前并非已生成契约 |
+| [frontend/src/features/feedback/FeedbackForm.tsx](../../frontend/src/features/feedback/FeedbackForm.tsx) | 已实现 | 32 | 反馈提交、更新、备注长度和错误提示 |
+| [frontend/src/shared/api/client.ts](../../frontend/src/shared/api/client.ts) | 已实现 | 23 / 30 / 31 / 32 | 统一 fetch、超时、request_id 和错误转换 |
+| [frontend/src/shared/api/generated.ts](../../frontend/src/shared/api/generated.ts) | 已实现 | 23 / 30 / 31 / 32 | 从后端 OpenAPI 生成的类型落点，当前并非已生成契约 |
 | [frontend/src/shared/ui/RequestState.tsx](../../frontend/src/shared/ui/RequestState.tsx) | 待实现占位 | 30 | 被多个 feature 使用的加载与请求错误提示，不放医疗业务判断 |
 | [backend/app/modules/answering/prompts/v1.md](../../backend/app/modules/answering/prompts/v1.md) | 现有实现 | 22 | 版本化证据回答提示词 |
 | [backend/app/modules/answering/prompts/routing-v1.md](../../backend/app/modules/answering/prompts/routing-v1.md) | 现有实现 | 22 | 版本化请求分流提示词 |
-| [deploy/compose.production.yaml.example](../../deploy/compose.production.yaml.example) | 待实现占位 | 42 | 生产部署配置示例占位，当前不可运行 |
+| [deploy/compose.production.yaml.example](../../deploy/compose.production.yaml.example) | 已实现 | 42 | 生产部署配置示例占位，当前不可运行 |
 | [.github/workflows/ci.yml.example](../../.github/workflows/ci.yml.example) | 待实现占位 | 41 / 42 | CI 设计占位，不自动执行 |
 | [docs/mvp-scope.md](../../docs/mvp-scope.md) | 现有实现 | 01 | 现有首版范围与业务分类的唯一规则 |
 | [scripts/check_layout.py](../../scripts/check_layout.py) | 现有实现 | ARCH-01 / ARCH-02 | 架构入口、占位、任务覆盖与本地文档链接检查；不代替 import 依赖检查 |

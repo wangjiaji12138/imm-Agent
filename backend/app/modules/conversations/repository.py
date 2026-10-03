@@ -1,6 +1,6 @@
 """All message queries are scoped to an authenticated conversation."""
 
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
 from app.modules.conversations.models import Conversation, Message
@@ -29,3 +29,7 @@ def append_message(session: Session, conversation: Conversation, question: str, 
 def owns_request(session: Session, conversation_id: str, request_id: str) -> bool:
     return session.scalar(select(Message.id).where(Message.conversation_id == conversation_id,
                                                     Message.request_id == request_id)) is not None
+
+
+def delete_older_than(session: Session, cutoff) -> int:
+    return session.execute(delete(Conversation).where(Conversation.updated_at < cutoff)).rowcount
